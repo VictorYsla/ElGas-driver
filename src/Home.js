@@ -7,7 +7,7 @@ import { actions } from './redux';
 import { getAllUsers } from './apis/firebase';
 
 function Home(props) {
-	//console.log('Primer redux', props.login);
+	//console.log('Primer redux', props.login);//
 
 	const probando = async () => {
 		await getAllUsers((r) => {
