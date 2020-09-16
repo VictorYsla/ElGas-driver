@@ -26,6 +26,7 @@ export const tamañoLetra = {
 	tituloContainer: 2.5,
 	botones: 2.5,
 };
+
 export const pantalla = {
 	screenHeight: Math.round(Dimensions.get('window').height),
 	screenWidth: Math.round(Dimensions.get('window').screenWidth),

@@ -5,13 +5,12 @@ import { View, Text, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 import { actions } from './redux';
 import { getAllUsers } from './apis/firebase';
+import { RFPercentage } from 'react-native-responsive-fontsize';
 
 function Home(props) {
-	//console.log('Primer redux', props.login);//
-
 	const probando = async () => {
 		await getAllUsers((r) => {
-			console.log('Homa', r);
+			props.dispatch(actions.actualizarLogin('fafdadfadf'));
 		});
 	};
 
@@ -21,7 +20,7 @@ function Home(props) {
 
 	return (
 		<View style={styles.container}>
-			<Text>Hola Mundo</Text>
+			<Text style={{ fontSize: RFPercentage(2) }}>Hola Mundo</Text>
 		</View>
 	);
 }

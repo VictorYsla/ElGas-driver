@@ -33,7 +33,8 @@ export default function App() {
 	};
 
 	useEffect(() => {
-		persistStore(store).purge();
+		//limpiar
+		//persistStore(store).purge();
 
 		fonts();
 	}, []);
