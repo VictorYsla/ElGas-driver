@@ -1,40 +1,42 @@
-import React, { useEffect } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from "react";
+import { View, Text, StyleSheet } from "react-native";
 
-//importaciones necesarias para redux
-import { connect } from 'react-redux';
-import { actions } from './redux';
-import { getAllUsers } from './apis/firebase';
-import { RFPercentage } from 'react-native-responsive-fontsize';
+//importaciones necesarias para redux//
+import { connect } from "react-redux";
+import { actions } from "./redux";
+import { getAllUsers } from "./apis/firebase";
+import Container from "./generales/Container";
+import { getCollection, postCollection } from "./apis/querys";
 
 function Home(props) {
-	const probando = async () => {
-		await getAllUsers((r) => {
-			props.dispatch(actions.actualizarLogin('fafdadfadf'));
-		});
-	};
+  const { login, dispatch, navigation } = props;
+  const [response, setResponse] = useState(null);
+  const probando = async () => {
+    await getAllUsers((r) => {});
+  };
+  console.log("hook", response);
+  //   useEffect(() => {
+  //     dispatch(actions.actualizarNavigation(navigation));
+  //     getCollection(setResponse, "1");
+  //     postCollection("2", { name: "Hola mundo" });
+  //   }, []);
 
-	useEffect(() => {
-		probando();
-	}, []);
-
-	return (
-		<View style={styles.container}>
-			<Text style={{ fontSize: RFPercentage(2) }}>Hola Mundo</Text>
-		</View>
-	);
+  return (
+    <Container style={styles.container}>
+      {/* <BasicHeader title='Home' /> */}
+      <Text>Hola Mundo</Text>
+    </Container>
+  );
 }
 
 const styles = StyleSheet.create({
-	container: {
-		alignItems: 'center',
-		justifyContent: 'center',
-		width: '100%',
-		flex: 1,
-	},
+  container: {
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
+    flex: 1,
+  },
 });
-
-const mapStateToProps = (state) => ({
-	login: state.login.login,
-});
+//
+const mapStateToProps = (state) => ({ login: state.login });
 export default connect(mapStateToProps)(Home);
