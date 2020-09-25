@@ -1,11 +1,11 @@
-import { combineReducers } from 'redux';
+import { combineReducers } from "redux";
 
-import login, { actualizarLogin } from './login';
+import login, { actualizarLogin } from "./reducers/login";
 
 export default combineReducers({
-	login,
+  login,
 });
 
 export const actions = {
-	actualizarLogin,
+  actualizarLogin,
 };
