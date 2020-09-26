@@ -29,7 +29,7 @@ const BasicHeader = ({
   icon = null,
   centerWidth = 60,
   leftComponent = () => InitalLeftComponent(icon, iconWidth, iconHeight),
-  headerHeigth = 7.5,
+  headerHeigth = 8.5,
   rigthComponent = () => {},
   centerComponent = () => {},
   title = "title",
@@ -47,7 +47,13 @@ const BasicHeader = ({
       <View style={{ width: `${leftWidth}%`, justifyContent: "center" }}>
         {leftComponent(icon, iconWidth, iconHeight)}
       </View>
-      <View style={{ width: `${centerWidth}%`, justifyContent: "center" }}>
+      <View
+        style={{
+          width: `${centerWidth}%`,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
         {centerComponent() ? (
           centerComponent()
         ) : (
