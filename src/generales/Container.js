@@ -31,7 +31,7 @@ function Container({
       <View style={[{ flex: 1, width: "100%" }, styleContainer]}>
         {children}
       </View>
-      {footer && <Footer navigation={navigation?.navigation} />}
+      {footer && <Footer navigation={navigation} />}
       {isloading && (
         <Cargando
           style={{
