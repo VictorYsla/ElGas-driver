@@ -10,6 +10,7 @@ import Inicio from "./Home";
 import PantallaLogin from "./screens/Auth/PantallaLogin";
 import Registrarse from "./screens/Auth/Registrarse";
 import RecuperarContrasena from "./screens/Auth/RecuperarContrasena";
+import MiCuenta from "./screens/MiCuenta/MiCuenta";
 
 const Navegador = (props) => {
   const Stack = createStackNavigator();
@@ -31,6 +32,10 @@ const Navegador = (props) => {
         />
 
         <Stack.Screen name="Inicio" component={Inicio} />
+
+        {/* Mi Cuenta */}
+
+        <Stack.Screen name="MiCuenta" component={MiCuenta} />
       </Stack.Navigator>
     </NavigationContainer>
   );
