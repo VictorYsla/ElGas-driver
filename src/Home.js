@@ -55,7 +55,10 @@ const Inicio = (props) => {
         </View>
 
         <View style={[{ marginTop: 30 }]}>
-          <TouchableOpacity activeOpacity={0.8}>
+          <TouchableOpacity
+            activeOpacity={0.6}
+            onPress={() => props.navigation.navigate("MiCuenta")}
+          >
             <View style={[{ flexDirection: "row", alignItems: "center" }]}>
               <View style={[{ width: 30, height: 30, marginVertical: 15 }]}>
                 <ProfileIcon
