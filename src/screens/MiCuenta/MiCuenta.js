@@ -23,8 +23,6 @@ const MiCuenta = (props) => {
 
   const form = useForm({ initialValues });
 
-  console.log(screenHeight);
-
   return (
     <Container styleContainer={[styles.screen]} navigation={props.navigation}>
       <BasicHeader
