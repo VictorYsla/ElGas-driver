@@ -194,7 +194,7 @@ const PantallaLogin = (props) => {
         <Button
           color="#fff"
           style={{ marginBottom: 10 }}
-          onPress={/* onLogin */ () => props.navigation.navigate("Home")} //() => props.navigation.navigate("Tarjetas")
+          onPress={/* onLogin */ () => props.navigation.navigate("Inicio")} //() => props.navigation.navigate("Tarjetas")
         >
           <Text style={{ textTransform: "uppercase", fontWeight: "bold" }}>
             Ingresar
