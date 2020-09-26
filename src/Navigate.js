@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 
-import Home from "./Home";
+import Inicio from "./Home";
 import PantallaLogin from "./screens/Auth/PantallaLogin";
 import Registrarse from "./screens/Auth/Registrarse";
 import RecuperarContrasena from "./screens/Auth/RecuperarContrasena";
@@ -30,7 +30,7 @@ const Navegador = (props) => {
           component={RecuperarContrasena}
         />
 
-        <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen name="Inicio" component={Inicio} />
       </Stack.Navigator>
     </NavigationContainer>
   );
