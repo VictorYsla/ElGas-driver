@@ -11,6 +11,8 @@ import PantallaLogin from "./screens/Auth/PantallaLogin";
 import Registrarse from "./screens/Auth/Registrarse";
 import RecuperarContrasena from "./screens/Auth/RecuperarContrasena";
 import MiCuenta from "./screens/MiCuenta/MiCuenta";
+import MisPedidos from "./screens/Pedidos/MisPedidos";
+import DetalleSolicitado from "./screens/Pedidos/DetalleSolicitado";
 
 const Navegador = (props) => {
   const Stack = createStackNavigator();
@@ -34,8 +36,11 @@ const Navegador = (props) => {
         <Stack.Screen name="Inicio" component={Inicio} />
 
         {/* Mi Cuenta */}
-
         <Stack.Screen name="MiCuenta" component={MiCuenta} />
+
+        {/* Mis Pedidos */}
+        <Stack.Screen name="MisPedidos" component={MisPedidos} />
+        <Stack.Screen name="DetalleSolicitado" component={DetalleSolicitado} />
       </Stack.Navigator>
     </NavigationContainer>
   );
