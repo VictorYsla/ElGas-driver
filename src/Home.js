@@ -80,7 +80,10 @@ const Inicio = (props) => {
               </Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity activeOpacity={0.6}>
+          <TouchableOpacity
+            activeOpacity={0.6}
+            onPress={() => props.navigation.navigate("MisPedidos")}
+          >
             <View style={[{ flexDirection: "row", alignItems: "center" }]}>
               <View style={[{ width: 30, height: 30, marginVertical: 15 }]}>
                 <OrdersIcon width="100%" height="100%" />
