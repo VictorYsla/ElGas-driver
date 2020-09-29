@@ -16,7 +16,11 @@ import Container from "./generales/Container";
 
 const Inicio = (props) => {
   return (
-    <Container style={styles.container} footer={false}>
+    <Container
+      style={styles.container}
+      footer={false}
+      navigation={props.navigation}
+    >
       <BasicHeader
         title="Inicio"
         icon={<SearchIcon height={20} width={20} />}
