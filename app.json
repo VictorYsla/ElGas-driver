@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "camp",
-    "slug": "camp",
+    "name": "elgasdriver",
+    "slug": "elgasdriver",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -18,7 +18,7 @@
       "supportsTablet": true
     },
     "android": {
-      "package": "com.camp.gestion",
+      "package": "com.elgasdriver",
       "versionCode": 5,
       "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"]
     },
