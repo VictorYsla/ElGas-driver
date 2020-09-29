@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { RFPercentage } from "react-native-responsive-fontsize";
+import { useDispatch } from "react-redux";
 import CustomButton from "../../components/CustomButton";
 import CustomSelector from "../../components/Form/Selector";
 import BasicHeader from "../../components/Header/BasicHeader";
@@ -15,6 +16,7 @@ import PhoneIcon from "../../components/Icons/PhoneIcon";
 import { colores, pantalla } from "../../constantes/Temas";
 import Container from "../../generales/Container";
 import useForm from "../../hooks/useForm";
+import { actions } from "../../redux";
 
 const initialValues = { dni: "" };
 
@@ -22,6 +24,15 @@ const MiCuenta = (props) => {
   const { screenHeight } = pantalla;
 
   const form = useForm({ initialValues });
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const actualizarRuta = (ruta) =>
+      dispatch(actions.actualizarUbicacion(ruta));
+
+    actualizarRuta(props.route.name);
+  }, []);
 
   return (
     <Container styleContainer={[styles.screen]} navigation={props.navigation}>
