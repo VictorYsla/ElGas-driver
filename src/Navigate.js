@@ -1,10 +1,13 @@
 import React from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, Platform } from "react-native";
 
 import { connect } from "react-redux";
 
 import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
+import {
+  CardStyleInterpolators,
+  createStackNavigator,
+} from "@react-navigation/stack";
 
 import Inicio from "./Home";
 import PantallaLogin from "./screens/Auth/PantallaLogin";
@@ -13,6 +16,7 @@ import RecuperarContrasena from "./screens/Auth/RecuperarContrasena";
 import MiCuenta from "./screens/MiCuenta/MiCuenta";
 import MisPedidos from "./screens/Pedidos/MisPedidos";
 import DetalleSolicitado from "./screens/Pedidos/DetalleSolicitado";
+import DetalleEnCamino from "./screens/Pedidos/DetalleEnCamino";
 
 const Navegador = (props) => {
   const Stack = createStackNavigator();
@@ -36,11 +40,48 @@ const Navegador = (props) => {
         <Stack.Screen name="Inicio" component={Inicio} />
 
         {/* Mi Cuenta */}
-        <Stack.Screen name="MiCuenta" component={MiCuenta} />
+        <Stack.Screen
+          name="MiCuenta"
+          component={MiCuenta}
+          options={{
+            cardStyleInterpolator:
+              Platform.OS == "ios"
+                ? CardStyleInterpolators.forHorizontalIOS
+                : CardStyleInterpolators.forNoAnimation,
+          }}
+        />
 
         {/* Mis Pedidos */}
-        <Stack.Screen name="MisPedidos" component={MisPedidos} />
-        <Stack.Screen name="DetalleSolicitado" component={DetalleSolicitado} />
+        <Stack.Screen
+          name="MisPedidos"
+          component={MisPedidos}
+          options={{
+            cardStyleInterpolator:
+              Platform.OS == "ios"
+                ? CardStyleInterpolators.forHorizontalIOS
+                : CardStyleInterpolators.forNoAnimation,
+          }}
+        />
+        <Stack.Screen
+          name="DetalleSolicitado"
+          component={DetalleSolicitado}
+          options={{
+            cardStyleInterpolator:
+              Platform.OS == "ios"
+                ? CardStyleInterpolators.forHorizontalIOS
+                : CardStyleInterpolators.forNoAnimation,
+          }}
+        />
+        <Stack.Screen
+          name="DetalleEnCamino"
+          component={DetalleEnCamino}
+          options={{
+            cardStyleInterpolator:
+              Platform.OS == "ios"
+                ? CardStyleInterpolators.forHorizontalIOS
+                : CardStyleInterpolators.forNoAnimation,
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
