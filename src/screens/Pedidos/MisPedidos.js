@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   FlatList,
 } from "react-native";
 import { RFPercentage } from "react-native-responsive-fontsize";
+import { useDispatch } from "react-redux";
 import BasicHeader from "../../components/Header/BasicHeader";
 import AddressMarker from "../../components/Icons/AddressMarker";
 import ChevronLeftIcon from "../../components/Icons/ChevronLeftIcon";
@@ -15,11 +16,19 @@ import MoneyMarkerIcon from "../../components/Icons/MoneyMarker";
 import StarIcon from "../../components/Icons/StarIcon";
 
 import Container from "../../generales/Container";
+import { actions } from "../../redux";
 
 const MisPedidos = (props) => {
   const [requested, setRequested] = useState(true);
   const [onTheWay, setOnTheWay] = useState(false);
   const [finished, setFinished] = useState(false);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const actualizarNavegacion = (ruta) =>
+      dispatch(actions.actualizarUbicacion(ruta));
+    actualizarNavegacion(props.route.name);
+  }, []);
 
   const dummy_data = [
     {
@@ -65,16 +74,16 @@ const MisPedidos = (props) => {
   ];
 
   return (
-    <Container styleContainer={styles.screen}>
+    <Container styleContainer={styles.screen} navigation={props.navigation}>
       <BasicHeader
-        icon={<ChevronLeftIcon height={20} width={20} />}
+        icon={<ChevronLeftIcon height={15} width={15} />}
         title="Mis Pedidos"
       />
       <View
         style={{
-          height: "10%",
           width: "100%",
           alignItems: "center",
+          backgroundColor: "red",
         }}
       >
         <View style={[styles.row, styles.tabsButtonsContainer]}>
@@ -144,8 +153,9 @@ const MisPedidos = (props) => {
           style={{
             flex: 1,
             width: "90%",
-            padding: 20,
-            height: "40%",
+            paddingVertical: 10,
+            paddingHorizontal: 20,
+            height: "100%",
           }}
         >
           <FlatList
@@ -161,14 +171,16 @@ const MisPedidos = (props) => {
         <View
           style={{
             width: "100%",
-            padding: 20,
+            paddingBottom: 10,
             paddingHorizontal: 20,
-            height: "40%",
+            height: "45%",
           }}
         >
           <FlatList
             data={dummy_data}
-            renderItem={({ item }) => <EnCaminoItem item={item} />}
+            renderItem={({ item }) => (
+              <EnCaminoItem item={item} navigation={props.navigation} />
+            )}
             showsVerticalScrollIndicator={false}
           />
         </View>
@@ -179,21 +191,24 @@ const MisPedidos = (props) => {
             flex: 1,
             width: "90%",
             paddingHorizontal: 20,
-            height: "40%",
+            height: "100%",
           }}
         >
           <FlatList
             data={dummy_data}
-            renderItem={({ item }) => <ListItem item={item} />}
+            contentContainerStyle={[{ paddingVertical: 10 }]}
+            renderItem={({ item }) => <FinishedItem item={item} />}
             showsVerticalScrollIndicator={false}
           />
         </View>
       )}
-      <View
-        style={[
-          { flex: 1, backgroundColor: "red", height: "100%", width: "100%" },
-        ]}
-      ></View>
+      {onTheWay && (
+        <View
+          style={[
+            { flex: 1, backgroundColor: "red", height: "100%", width: "100%" },
+          ]}
+        ></View>
+      )}
     </Container>
   );
 };
@@ -219,18 +234,21 @@ const RequestedListItem = ({ item, navigation }) => {
       <View
         style={[
           styles.row,
-          { justifyContent: "space-between", marginVertical: 10 },
+          {
+            justifyContent: "space-between",
+            marginVertical: 10,
+          },
         ]}
       >
-        <View>
+        <View style={{ width: "50%" }}>
           <Text style={styles.user}>N73</Text>
           <View style={[styles.row, { justifyContent: "space-between" }]}>
             <Text style={[styles.label]}>{`${date[0]}`}</Text>
-            <Text>{formattedTime}</Text>
+            <Text style={[styles.label]}>{formattedTime}</Text>
           </View>
         </View>
         <View style={{ alignItems: "center", justifyContent: "center" }}>
-          <ChevronRightIcon width={15} height={15} />
+          <ChevronRightIcon height={15} width={15} />
         </View>
       </View>
     </TouchableNativeFeedback>
@@ -238,96 +256,162 @@ const RequestedListItem = ({ item, navigation }) => {
 };
 
 // En Camino List Item
-const EnCaminoItem = ({ item }) => {
+const EnCaminoItem = ({ item, navigation }) => {
   const date = item.date.split("T");
   const formattedTime = date[1].substring(0, 8);
 
   return (
-    <View>
-      <View
-        style={[
-          styles.row,
-          { justifyContent: "space-between", marginVertical: 10 },
-        ]}
-      >
-        <View>
-          <Text style={styles.user}>{item.user}</Text>
-          <View style={[styles.row, { justifyContent: "space-between" }]}>
-            <Text style={[styles.label]}>{`${date[0]}`}</Text>
-            <Text>{formattedTime}</Text>
+    <TouchableNativeFeedback
+      onPress={() =>
+        navigation.navigate("DetalleEnCamino", {
+          item: {
+            ...item,
+            title: "N73",
+            payType: "Efectivo",
+            product: { name: "Gas 15Kg", price: 1.6, qty: 5 },
+          },
+        })
+      }
+    >
+      <View style={[{ marginVertical: 10 }]}>
+        <View
+          style={[
+            styles.row,
+            { justifyContent: "space-between", marginVertical: 5 },
+          ]}
+        >
+          <View>
+            <Text style={styles.user}>{item.user}</Text>
+            <View style={[styles.row, { justifyContent: "space-between" }]}>
+              <Text style={[styles.label]}>{`${date[0]}`}</Text>
+              <Text style={[styles.label]}>{formattedTime}</Text>
+            </View>
+          </View>
+          <View
+            style={{
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Text style={styles.label}>ID {item.id}</Text>
+          </View>
+
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+            }}
+          >
+            <ChevronRightIcon height={15} width={15} />
+            <AddressMarker height={40} width={40} />
+            <MoneyMarkerIcon height={40} width={40} />
           </View>
         </View>
         <View
-          style={{
-            alignItems: "center",
-            justifyContent: "center",
-          }}
+          style={[
+            {
+              width: "40%",
+              flexDirection: "row",
+            },
+          ]}
         >
-          <Text style={styles.label}>ID {item.id}</Text>
-        </View>
-
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-          }}
-        >
-          <ChevronRightIcon height={15} width={15} />
-          <AddressMarker height={40} width={40} />
-          <MoneyMarkerIcon height={40} width={40} />
+          <View>
+            <StarIcon width={15} height={15} />
+          </View>
+          <View style={[{ marginLeft: 5 }]}>
+            <StarIcon width={15} height={15} />
+          </View>
+          <View style={[{ marginLeft: 5 }]}>
+            <StarIcon width={15} height={15} />
+          </View>
+          <View style={[{ marginLeft: 5 }]}>
+            <StarIcon width={15} height={15} />
+          </View>
+          <View style={[{ marginLeft: 5 }]}>
+            <StarIcon width={15} height={15} />
+          </View>
         </View>
       </View>
-      <View
-        style={[
-          {
-            width: "40%",
-            flexDirection: "row",
-          },
-        ]}
-      >
-        <View>
-          <StarIcon width={15} height={15} />
-        </View>
-        <View style={[{ marginLeft: 5 }]}>
-          <StarIcon width={15} height={15} />
-        </View>
-        <View style={[{ marginLeft: 5 }]}>
-          <StarIcon width={15} height={15} />
-        </View>
-        <View style={[{ marginLeft: 5 }]}>
-          <StarIcon width={15} height={15} />
-        </View>
-        <View style={[{ marginLeft: 5 }]}>
-          <StarIcon width={15} height={15} />
-        </View>
-      </View>
-    </View>
+    </TouchableNativeFeedback>
   );
 };
 // Finalizados List Item
 
-const ListItem = ({ item }) => {
+const FinishedItem = ({ item }) => {
   const date = item.date.split("T");
   const formattedTime = date[1].substring(0, 8);
 
   return (
-    <View
-      style={[
-        styles.row,
-        { justifyContent: "space-between", marginVertical: 10 },
-      ]}
+    <TouchableNativeFeedback
+      onPress={() =>
+        navigation.navigate("DetalleEnCamino", {
+          item: {
+            ...item,
+            title: "N73",
+            payType: "Efectivo",
+            product: { name: "Gas 15Kg", price: 1.6, qty: 5 },
+          },
+        })
+      }
     >
-      <View>
-        <Text style={styles.user}>{item.user}</Text>
-        <View style={[styles.row, { justifyContent: "space-between" }]}>
-          <Text style={[styles.label]}>{`${date[0]}`}</Text>
-          <Text>{formattedTime}</Text>
+      <View style={[{ marginVertical: 10 }]}>
+        <View
+          style={[
+            styles.row,
+            { justifyContent: "space-between", marginVertical: 5 },
+          ]}
+        >
+          <View>
+            <Text style={styles.user}>{item.user}</Text>
+            <View style={[styles.row, { justifyContent: "space-between" }]}>
+              <Text style={[styles.label]}>{`${date[0]}`}</Text>
+              <Text style={[styles.label]}>{formattedTime}</Text>
+            </View>
+          </View>
+          <View
+            style={{
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Text style={styles.label}>ID {item.id}</Text>
+          </View>
+
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+            }}
+          >
+            <ChevronRightIcon height={15} width={15} />
+          </View>
+        </View>
+        <View
+          style={[
+            {
+              width: "40%",
+              flexDirection: "row",
+            },
+          ]}
+        >
+          <View>
+            <StarIcon width={15} height={15} />
+          </View>
+          <View style={[{ marginLeft: 5 }]}>
+            <StarIcon width={15} height={15} />
+          </View>
+          <View style={[{ marginLeft: 5 }]}>
+            <StarIcon width={15} height={15} />
+          </View>
+          <View style={[{ marginLeft: 5 }]}>
+            <StarIcon width={15} height={15} />
+          </View>
+          <View style={[{ marginLeft: 5 }]}>
+            <StarIcon width={15} height={15} />
+          </View>
         </View>
       </View>
-      <View style={{ alignItems: "center", justifyContent: "center" }}>
-        <Text style={styles.label}>ID {item.id}</Text>
-      </View>
-    </View>
+    </TouchableNativeFeedback>
   );
 };
 
