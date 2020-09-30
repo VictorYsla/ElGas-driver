@@ -1,41 +1,114 @@
-import React from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import React from "react";
+import { View, StyleSheet, Text, Platform } from "react-native";
 
-import { connect } from 'react-redux';
+import { connect } from "react-redux";
 
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { NavigationContainer } from "@react-navigation/native";
+import {
+  CardStyleInterpolators,
+  createStackNavigator,
+} from "@react-navigation/stack";
 
-import Home from './Home';
+import Inicio from "./Home";
+import PantallaLogin from "./screens/Auth/PantallaLogin";
+import Registrarse from "./screens/Auth/Registrarse";
+import RecuperarContrasena from "./screens/Auth/RecuperarContrasena";
+import MiCuenta from "./screens/MiCuenta/MiCuenta";
+import MisPedidos from "./screens/Pedidos/MisPedidos";
+import DetalleSolicitado from "./screens/Pedidos/DetalleSolicitado";
+import DetalleEnCamino from "./screens/Pedidos/DetalleEnCamino";
+import Facturacion from "./screens/Facturacion/Facturacion";
 
 const Navegador = (props) => {
-	const Stack = createStackNavigator();
+  const Stack = createStackNavigator();
 
-	return (
-		<NavigationContainer>
-			<Stack.Navigator
-				screenOptions={{
-					headerShown: false,
-				}}
-				initialRouteName="Home"
-			>
-				<Stack.Screen name="Home" component={Home} />
-			</Stack.Navigator>
-		</NavigationContainer>
-	);
+  return (
+    <NavigationContainer>
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+        }}
+        initialRouteName="PantallaLogin"
+      >
+        {/* Login Process */}
+        <Stack.Screen name="PantallaLogin" component={PantallaLogin} />
+        <Stack.Screen name="Registrarse" component={Registrarse} />
+        <Stack.Screen
+          name="RecuperarContrasena"
+          component={RecuperarContrasena}
+        />
+
+        <Stack.Screen name="Inicio" component={Inicio} />
+
+        {/* Mi Cuenta */}
+        <Stack.Screen
+          name="MiCuenta"
+          component={MiCuenta}
+          options={{
+            cardStyleInterpolator:
+              Platform.OS == "ios"
+                ? CardStyleInterpolators.forHorizontalIOS
+                : CardStyleInterpolators.forNoAnimation,
+          }}
+        />
+
+        {/* Mis Pedidos */}
+        <Stack.Screen
+          name="MisPedidos"
+          component={MisPedidos}
+          options={{
+            cardStyleInterpolator:
+              Platform.OS == "ios"
+                ? CardStyleInterpolators.forHorizontalIOS
+                : CardStyleInterpolators.forNoAnimation,
+          }}
+        />
+        <Stack.Screen
+          name="DetalleSolicitado"
+          component={DetalleSolicitado}
+          options={{
+            cardStyleInterpolator:
+              Platform.OS == "ios"
+                ? CardStyleInterpolators.forHorizontalIOS
+                : CardStyleInterpolators.forNoAnimation,
+          }}
+        />
+        <Stack.Screen
+          name="DetalleEnCamino"
+          component={DetalleEnCamino}
+          options={{
+            cardStyleInterpolator:
+              Platform.OS == "ios"
+                ? CardStyleInterpolators.forHorizontalIOS
+                : CardStyleInterpolators.forNoAnimation,
+          }}
+        />
+        <Stack.Screen
+          name="MiFacturacion"
+          component={Facturacion}
+          options={{
+            cardStyleInterpolator:
+              Platform.OS == "ios"
+                ? CardStyleInterpolators.forHorizontalIOS
+                : CardStyleInterpolators.forNoAnimation,
+          }}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
 };
 const styles = StyleSheet.create({
-	container: {
-		height: '100%',
-		width: '100%',
-		alignItems: 'center',
-		justifyContent: 'flex-start',
-		//backgroundColor: '#e1e8f4',
-	},
+  container: {
+    height: "100%",
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    //backgroundColor: '#e1e8f4',
+  },
 });
 
 const mapStateToProps = (state) => ({
-	login: state.login,
+  login: state.login,
 });
 
 export default connect(mapStateToProps)(Navegador);
