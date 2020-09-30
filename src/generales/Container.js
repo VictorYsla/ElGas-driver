@@ -132,7 +132,7 @@ const Footer = ({ navigation }) => {
       >
         <Item
           navigation={navigation}
-          ruta="Facturacion"
+          ruta="MiFacturacion"
           texto="Mi Facturacion"
           icon={
             <CardIcon
