@@ -9,6 +9,7 @@ import CalendarDriverIcon from "../../components/Icons/CalendarDriver";
 import { FlatList } from "react-native-gesture-handler";
 import { useDispatch } from "react-redux";
 import { actions } from "../../redux";
+import { RFPercentage } from "react-native-responsive-fontsize";
 
 const Facturacion = (props) => {
   const [startDate, setStartDate] = useState(new Date());
@@ -62,8 +63,8 @@ const Facturacion = (props) => {
             },
           ]}
         >
-          <Text>Arriendado por pagar</Text>
-          <Text>$00.00</Text>
+          <Text style={[styles.label]}>Arriendado por pagar</Text>
+          <Text style={[styles.number]}>$00.00</Text>
         </View>
         <View
           style={[
@@ -77,8 +78,8 @@ const Facturacion = (props) => {
             },
           ]}
         >
-          <Text>Tus ganancias</Text>
-          <Text>$11.90</Text>
+          <Text style={[styles.label]}>Tus ganancias</Text>
+          <Text style={[styles.number]}>$11.90</Text>
         </View>
 
         <View
@@ -87,6 +88,7 @@ const Facturacion = (props) => {
               flexDirection: "row",
               width: "100%",
               justifyContent: "space-around",
+              marginVertical: 15,
             },
           ]}
         >
@@ -94,28 +96,37 @@ const Facturacion = (props) => {
             style={[
               {
                 flexDirection: "row",
+                alignItems: "center",
               },
             ]}
           >
-            <Text>Desde: </Text>
-            <Text>
+            <Text style={[styles.label]}>Desde: </Text>
+            <Text style={[styles.label]}>
               {`${startDate.getDate()}-${
                 startDate.getMonth() + 1
               }-${startDate.getFullYear()}`}
             </Text>
-            <TouchableOpacity activeOpacity={0.6} onPress={onShowStartCalendar}>
+            <TouchableOpacity
+              activeOpacity={0.6}
+              onPress={onShowStartCalendar}
+              style={[{ marginLeft: 10 }]}
+            >
               <CalendarDriverIcon width={20} height={20} />
             </TouchableOpacity>
           </View>
 
-          <View style={[{ flexDirection: "row" }]}>
-            <Text>Hasta: </Text>
-            <Text>
+          <View style={[{ flexDirection: "row", alignItems: "center" }]}>
+            <Text style={[styles.label]}>Hasta: </Text>
+            <Text style={[styles.label]}>
               {`${endDate.getDate()}-${
                 endDate.getMonth() + 1
               }-${endDate.getFullYear()}`}
             </Text>
-            <TouchableOpacity activeOpacity={0.6} onPress={onShowEndCalendar}>
+            <TouchableOpacity
+              activeOpacity={0.6}
+              onPress={onShowEndCalendar}
+              style={[{ marginLeft: 10 }]}
+            >
               <CalendarDriverIcon width={20} height={20} />
             </TouchableOpacity>
           </View>
@@ -143,7 +154,7 @@ const Facturacion = (props) => {
         </View>
 
         {/* Full Table */}
-        <View>
+        <View style={[{ flex: 1 }]}>
           {/* Header */}
           <View
             style={[
@@ -151,18 +162,19 @@ const Facturacion = (props) => {
                 flexDirection: "row",
                 justifyContent: "space-between",
                 backgroundColor: "#F2F2F2",
-                marginTop: 20,
+                // marginTop: 20,
+                paddingVertical: 5,
               },
             ]}
           >
             <View style={[{ alignItems: "center", flex: 1 }]}>
-              <Text>ID</Text>
+              <Text style={[styles.label]}>ID</Text>
             </View>
             <View style={[{ alignItems: "center", flex: 1 }]}>
-              <Text>Fecha</Text>
+              <Text style={[styles.label]}>Fecha</Text>
             </View>
             <View style={[{ alignItems: "center", flex: 1 }]}>
-              <Text>Distribuidor</Text>
+              <Text style={[styles.label]}>Distribuidor</Text>
             </View>
           </View>
           {/* Body */}
@@ -175,22 +187,27 @@ const Facturacion = (props) => {
               { id: 966, fecha: "2020/06/30", distribuidor: 14.0 },
               { id: 965, fecha: "2020/06/30", distribuidor: 14.0 },
               { id: 964, fecha: "2020/06/30", distribuidor: 14.0 },
+              { id: 963, fecha: "2020/06/30", distribuidor: 14.0 },
             ]}
             keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }) => (
               <View
                 style={[
-                  { flexDirection: "row", justifyContent: "space-between" },
+                  {
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    marginVertical: 10,
+                  },
                 ]}
               >
                 <View style={[{ alignItems: "center", flex: 1 }]}>
-                  <Text>{item.id}</Text>
+                  <Text style={[styles.label]}>{item.id}</Text>
                 </View>
                 <View style={[{ alignItems: "center", flex: 1 }]}>
-                  <Text>{item.fecha}</Text>
+                  <Text style={[styles.label]}>{item.fecha}</Text>
                 </View>
                 <View style={[{ alignItems: "center", flex: 1 }]}>
-                  <Text>{item.distribuidor}</Text>
+                  <Text style={[styles.label]}>{item.distribuidor}</Text>
                 </View>
               </View>
             )}
@@ -207,6 +224,12 @@ const styles = StyleSheet.create({
     width: "100%",
     paddingVertical: 10,
     height: "100%",
+  },
+  label: {
+    fontSize: RFPercentage(2.2),
+  },
+  number: {
+    fontSize: RFPercentage(2.4),
   },
 });
 export default Facturacion;
