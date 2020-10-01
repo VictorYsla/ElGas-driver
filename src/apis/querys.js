@@ -90,3 +90,34 @@ export const logIn = async (email = "", password = "") => {
       return { type: "error", value: e };
     });
 };
+
+export const getCurrentDeliverys = async(uid='333333333333' ) => {
+  const collection = 'plant_pedidos_en_camino'
+  return await firebase
+    .firestore()
+    .collection(collection)
+    .where('id_driver', '==', `${uid}`)
+    .get()
+    .then((x) => {
+      const values = [];
+      x.docs.forEach((doc) => {
+        values.push(doc.data());
+      });
+      return values;
+    });
+}
+
+export const getDeliverys = async( ) => {
+  const collection = 'plant_pedidos_pendientes'
+  return await firebase
+    .firestore()
+    .collection(collection)
+    .get()
+    .then((x) => {
+      const values = [];
+      x.docs.forEach((doc) => {
+        values.push(doc.data());
+      });
+      return values;
+    });
+}
