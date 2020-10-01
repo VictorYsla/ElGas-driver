@@ -18,6 +18,7 @@ import MisPedidos from "./screens/Pedidos/MisPedidos";
 import DetalleSolicitado from "./screens/Pedidos/DetalleSolicitado";
 import DetalleEnCamino from "./screens/Pedidos/DetalleEnCamino";
 import Facturacion from "./screens/Facturacion/Facturacion";
+import CambiarContraseña from "./screens/MiCuenta/CambiarContraseña";
 
 const Navegador = (props) => {
   const Stack = createStackNavigator();
@@ -51,6 +52,8 @@ const Navegador = (props) => {
                 : CardStyleInterpolators.forNoAnimation,
           }}
         />
+
+        <Stack.Screen name="CambiarContrasena" component={CambiarContraseña} />
 
         {/* Mis Pedidos */}
         <Stack.Screen
