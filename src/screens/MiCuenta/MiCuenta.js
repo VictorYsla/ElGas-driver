@@ -63,6 +63,7 @@ const MiCuenta = (props) => {
           Mi información
         </Text>
 
+        {/* Form Wrapper */}
         <View style={[{ height: "70%", width: "80%" }]}>
           <ScrollView>
             <View
@@ -418,7 +419,7 @@ const styles = StyleSheet.create({
   screen: {
     alignItems: "center",
 
-    minHeight: 450,
+    minHeight: 425,
   },
 });
 export default MiCuenta;
