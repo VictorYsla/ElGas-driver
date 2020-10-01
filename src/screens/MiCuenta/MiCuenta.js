@@ -17,34 +17,68 @@ import { colores, pantalla } from "../../constantes/Temas";
 import Container from "../../generales/Container";
 import useForm from "../../hooks/useForm";
 import { actions } from "../../redux";
-import {getCurrentDeliverys, getDeliverys} from '../../apis/querys'
+import {
+  getCurrentDeliverys,
+  getDeliverys,
+  postCollection,
+} from "../../apis/querys";
 
-const initialValues = { dni: "", name:'', dni:'', phone:'', email:'', day_delivery:'', nigth_delivery:'' };
+const initialValues = {
+  name: "",
+  dniType: "",
+  dni: "",
+  phone: "",
+  email: "",
+  day_delivery: "",
+  nigth_delivery: "",
+};
 
 const MiCuenta = (props) => {
   const { screenHeight } = pantalla;
 
   const form = useForm({ initialValues });
 
+  console.log(form.fields);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
-    getCurrentDeliverys('333333333333')
-    .then((response)=>{
-      console.log('Resposne: ', response);
-    })
-    getDeliverys()
-    .then((response)=>{
-      console.log('Resposne2: ', response);
-    })
+    // getCurrentDeliverys("333333333333").then((response) => {
+    //   console.log("Resposne: ", response);
+    // });
+    // getDeliverys().then((response) => {
+    //   console.log("Resposne2: ", response);
+    // });
     const actualizarRuta = (ruta) =>
       dispatch(actions.actualizarUbicacion(ruta));
     actualizarRuta(props.route.name);
   }, []);
   // console.log('Form: ', form.fields);
 
+  const onSubmit = () => {
+    const payload = {
+      // id de usuario
+      name: form.fields["name"],
+      dniType: form.fields["dniType"],
+      dni: form.fields["dni"],
+      phone: form.fields["phone"],
+      email: form.fields["email"],
+      day_delivery: form.fields["day_delivery"],
+      nigth_delivery: form.fields["nigth_delivery"],
+    };
+
+    // console.log(payload);
+    postCollection("usuarios", payload);
+  };
+
   return (
-    <Container styleContainer={[styles.screen]} navigation={props.navigation}>
+    <Container
+      styleContainer={[
+        styles.screen,
+        { minHeight: screenHeight <= 592 ? 425 : 550 },
+      ]}
+      navigation={props.navigation}
+    >
       <BasicHeader
         icon={<ChevronLeftIcon height={15} width={15} />}
         title="Mi Cuenta"
@@ -57,6 +91,8 @@ const MiCuenta = (props) => {
             flex: 1,
             alignItems: "center",
             justifyContent: screenHeight <= 592 ? "flex-start" : "center",
+            height: "100%",
+            minHeight: screenHeight <= 592 ? 450 : 600,
           },
         ]}
       >
@@ -111,10 +147,10 @@ const MiCuenta = (props) => {
                       borderBottomWidth: 1,
                       fontSize: RFPercentage(2.4),
                       paddingVertical: 5,
-                      height: 25,
+                      height: 30,
                     },
                   ]}
-                  {...form.getInput('name')}
+                  {...form.getInput("name")}
                 />
               </View>
             </View>
@@ -194,10 +230,10 @@ const MiCuenta = (props) => {
                       borderBottomWidth: 1,
                       fontSize: RFPercentage(2.4),
                       paddingVertical: 5,
-                      height: 25,
+                      height: 30,
                     },
                   ]}
-                  {...form.getInput('dni')}
+                  {...form.getInput("dni")}
                 />
               </View>
             </View>
@@ -237,10 +273,10 @@ const MiCuenta = (props) => {
                       borderBottomWidth: 1,
                       fontSize: RFPercentage(2.4),
                       paddingVertical: 5,
-                      height: 25,
+                      height: 30,
                     },
                   ]}
-                  {...form.getInput('phone')}
+                  {...form.getInput("phone")}
                 />
               </View>
             </View>
@@ -284,10 +320,10 @@ const MiCuenta = (props) => {
                       borderBottomWidth: 1,
                       fontSize: RFPercentage(2.4),
                       paddingVertical: 5,
-                      height: 25,
+                      height: 30,
                     },
                   ]}
-                  {...form.getInput('email')}
+                  {...form.getInput("email")}
                 />
               </View>
             </View>
@@ -327,10 +363,10 @@ const MiCuenta = (props) => {
                       borderBottomWidth: 1,
                       fontSize: RFPercentage(2.4),
                       paddingVertical: 5,
-                      height: 25,
+                      height: 30,
                     },
                   ]}
-                  {...form.getInput('day_delivery')}
+                  {...form.getInput("day_delivery")}
                 />
               </View>
             </View>
@@ -370,10 +406,10 @@ const MiCuenta = (props) => {
                       borderBottomWidth: 1,
                       fontSize: RFPercentage(2.4),
                       paddingVertical: 5,
-                      height: 25,
+                      height: 30,
                     },
                   ]}
-                  {...form.getInput('nigth_delivery')}
+                  {...form.getInput("nigth_delivery")}
                 />
               </View>
             </View>
@@ -413,7 +449,7 @@ const MiCuenta = (props) => {
             },
           ]}
         >
-          <CustomButton>
+          <CustomButton onPress={onSubmit}>
             <Text
               style={{
                 fontWeight: "bold",
@@ -433,8 +469,6 @@ const MiCuenta = (props) => {
 const styles = StyleSheet.create({
   screen: {
     alignItems: "center",
-
-    minHeight: 425,
   },
 });
 export default MiCuenta;
