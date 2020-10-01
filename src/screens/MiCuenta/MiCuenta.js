@@ -17,8 +17,9 @@ import { colores, pantalla } from "../../constantes/Temas";
 import Container from "../../generales/Container";
 import useForm from "../../hooks/useForm";
 import { actions } from "../../redux";
+import {getCurrentDeliverys, getDeliverys} from '../../apis/querys'
 
-const initialValues = { dni: "" };
+const initialValues = { dni: "", name:'', dni:'', phone:'', email:'', day_delivery:'', nigth_delivery:'' };
 
 const MiCuenta = (props) => {
   const { screenHeight } = pantalla;
@@ -28,11 +29,19 @@ const MiCuenta = (props) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    getCurrentDeliverys('333333333333')
+    .then((response)=>{
+      console.log('Resposne: ', response);
+    })
+    getDeliverys()
+    .then((response)=>{
+      console.log('Resposne2: ', response);
+    })
     const actualizarRuta = (ruta) =>
       dispatch(actions.actualizarUbicacion(ruta));
-
     actualizarRuta(props.route.name);
   }, []);
+  // console.log('Form: ', form.fields);
 
   return (
     <Container styleContainer={[styles.screen]} navigation={props.navigation}>
@@ -105,6 +114,7 @@ const MiCuenta = (props) => {
                       height: 25,
                     },
                   ]}
+                  {...form.getInput('name')}
                 />
               </View>
             </View>
@@ -187,6 +197,7 @@ const MiCuenta = (props) => {
                       height: 25,
                     },
                   ]}
+                  {...form.getInput('dni')}
                 />
               </View>
             </View>
@@ -229,6 +240,7 @@ const MiCuenta = (props) => {
                       height: 25,
                     },
                   ]}
+                  {...form.getInput('phone')}
                 />
               </View>
             </View>
@@ -275,6 +287,7 @@ const MiCuenta = (props) => {
                       height: 25,
                     },
                   ]}
+                  {...form.getInput('email')}
                 />
               </View>
             </View>
@@ -317,6 +330,7 @@ const MiCuenta = (props) => {
                       height: 25,
                     },
                   ]}
+                  {...form.getInput('day_delivery')}
                 />
               </View>
             </View>
@@ -359,6 +373,7 @@ const MiCuenta = (props) => {
                       height: 25,
                     },
                   ]}
+                  {...form.getInput('nigth_delivery')}
                 />
               </View>
             </View>
