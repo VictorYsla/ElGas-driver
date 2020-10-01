@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, ScrollView, TextInput } from "react-native";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { useDispatch } from "react-redux";
 import CustomButton from "../../components/CustomButton";
@@ -40,6 +40,7 @@ const MiCuenta = (props) => {
         icon={<ChevronLeftIcon height={15} width={15} />}
         title="Mi Cuenta"
       />
+
       <View
         style={[
           {
@@ -62,231 +63,319 @@ const MiCuenta = (props) => {
           Mi información
         </Text>
 
-        <View
-          style={[
-            {
-              flexDirection: "row",
-              alignItems: "center",
-              width: "80%",
-              marginVertical: 15,
-            },
-          ]}
-        >
-          <View style={[{ width: "20%" }]}>
-            <View
-              style={[
-                {
-                  width: screenHeight <= 592 ? 20 : 25,
-                  height: screenHeight <= 592 ? 20 : 25,
-                },
-              ]}
-            >
-              <OutlineUserIcon width="100%" height="100%" />
-            </View>
-          </View>
-          <View>
-            <Text style={[{ fontWeight: "bold", fontSize: RFPercentage(2.2) }]}>
-              Nombre y Apellido
-            </Text>
-            <Text style={[{ fontSize: RFPercentage(2.2) }]}>
-              Patricio Hidrovo
-            </Text>
-          </View>
-        </View>
-        <View
-          style={[
-            {
-              flexDirection: "row",
-              alignItems: "center",
-              marginVertical: 10,
-              width: "80%",
-            },
-          ]}
-        >
-          <View style={[{ width: "20%" }]}>
-            <View
-              style={[
-                {
-                  width: screenHeight <= 592 ? 20 : 25,
-                  height: screenHeight <= 592 ? 20 : 25,
-                },
-              ]}
-            >
-              <IDIcon width="100%" height="100%" />
-            </View>
-          </View>
-          <View>
-            <Text style={[{ fontWeight: "bold", fontSize: RFPercentage(2.2) }]}>
-              Tipo de identificación
-            </Text>
+        <View style={[{ height: "70%", width: "80%" }]}>
+          <ScrollView>
             <View
               style={[
                 {
                   flexDirection: "row",
                   alignItems: "center",
+                  width: "80%",
+                  marginVertical: 15,
                 },
               ]}
             >
-              <CustomSelector
-                fields={["C.I", "R.U.C"]}
-                form={form}
-                radiusHeight={15}
-                radiusWidth={15}
-              />
+              <View style={[{ width: "20%" }]}>
+                <View
+                  style={[
+                    {
+                      width: screenHeight <= 592 ? 20 : 25,
+                      height: screenHeight <= 592 ? 20 : 25,
+                    },
+                  ]}
+                >
+                  <OutlineUserIcon width="100%" height="100%" />
+                </View>
+              </View>
+              <View>
+                <Text
+                  style={[{ fontWeight: "bold", fontSize: RFPercentage(2.2) }]}
+                >
+                  Nombre y Apellido
+                </Text>
+                <TextInput
+                  style={[
+                    {
+                      width: 200,
+                      borderBottomColor: "#000",
+                      borderBottomWidth: 1,
+                      fontSize: RFPercentage(2.4),
+                      paddingVertical: 5,
+                      height: 25,
+                    },
+                  ]}
+                />
+              </View>
             </View>
-          </View>
-        </View>
-        <View
-          style={[{ flexDirection: "row", alignItems: "center", width: "80%" }]}
-        >
-          <View style={[{ width: "20%", marginLeft: -10 }]}>
             <View
               style={[
                 {
-                  width: screenHeight <= 592 ? 30 : 40,
-                  height: screenHeight <= 592 ? 30 : 40,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginVertical: 10,
+                  width: "80%",
                 },
               ]}
             >
-              <IDNumberIcon width="100%" height="100%" />
+              <View style={[{ width: "20%" }]}>
+                <View
+                  style={[
+                    {
+                      width: screenHeight <= 592 ? 20 : 25,
+                      height: screenHeight <= 592 ? 20 : 25,
+                    },
+                  ]}
+                >
+                  <IDIcon width="100%" height="100%" />
+                </View>
+              </View>
+              <View>
+                <Text
+                  style={[{ fontWeight: "bold", fontSize: RFPercentage(2.2) }]}
+                >
+                  Tipo de identificación
+                </Text>
+                <View
+                  style={[
+                    {
+                      flexDirection: "row",
+                      alignItems: "center",
+                    },
+                  ]}
+                >
+                  <CustomSelector
+                    fields={["C.I", "R.U.C"]}
+                    form={form}
+                    radiusHeight={15}
+                    radiusWidth={15}
+                  />
+                </View>
+              </View>
             </View>
-          </View>
-          <View style={[{ marginLeft: 10 }]}>
-            <Text style={[{ fontWeight: "bold", fontSize: RFPercentage(2.2) }]}>
-              Número de identificación
-            </Text>
-            <Text style={[{ fontSize: RFPercentage(2.2) }]}>170885522</Text>
-          </View>
-        </View>
-        <View
-          style={[
-            {
-              flexDirection: "row",
-              alignItems: "center",
-              marginVertical: 10,
-              width: "80%",
-            },
-          ]}
-        >
-          <View style={[{ width: "20%" }]}>
+            <View
+              style={[
+                { flexDirection: "row", alignItems: "center", width: "80%" },
+              ]}
+            >
+              <View style={[{ width: "20%", marginLeft: -10 }]}>
+                <View
+                  style={[
+                    {
+                      width: screenHeight <= 592 ? 30 : 40,
+                      height: screenHeight <= 592 ? 30 : 40,
+                    },
+                  ]}
+                >
+                  <IDNumberIcon width="100%" height="100%" />
+                </View>
+              </View>
+              <View style={[{ marginLeft: 10 }]}>
+                <Text
+                  style={[{ fontWeight: "bold", fontSize: RFPercentage(2.2) }]}
+                >
+                  Número de identificación
+                </Text>
+                <TextInput
+                  style={[
+                    {
+                      width: 200,
+                      borderBottomColor: "#000",
+                      borderBottomWidth: 1,
+                      fontSize: RFPercentage(2.4),
+                      paddingVertical: 5,
+                      height: 25,
+                    },
+                  ]}
+                />
+              </View>
+            </View>
             <View
               style={[
                 {
-                  width: screenHeight <= 592 ? 20 : 25,
-                  height: screenHeight <= 592 ? 20 : 25,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginVertical: 10,
+                  width: "80%",
                 },
               ]}
             >
-              <PhoneIcon width="100%" height="100%" />
+              <View style={[{ width: "20%" }]}>
+                <View
+                  style={[
+                    {
+                      width: screenHeight <= 592 ? 20 : 25,
+                      height: screenHeight <= 592 ? 20 : 25,
+                    },
+                  ]}
+                >
+                  <PhoneIcon width="100%" height="100%" />
+                </View>
+              </View>
+              <View>
+                <Text
+                  style={[{ fontWeight: "bold", fontSize: RFPercentage(2.2) }]}
+                >
+                  Número de celular
+                </Text>
+                <TextInput
+                  style={[
+                    {
+                      width: 200,
+                      borderBottomColor: "#000",
+                      borderBottomWidth: 1,
+                      fontSize: RFPercentage(2.4),
+                      paddingVertical: 5,
+                      height: 25,
+                    },
+                  ]}
+                />
+              </View>
             </View>
-          </View>
-          <View>
-            <Text style={[{ fontWeight: "bold", fontSize: RFPercentage(2.2) }]}>
-              Número de celular
-            </Text>
-            <Text style={[{ fontSize: RFPercentage(2.2) }]}>096257845</Text>
-          </View>
-        </View>
-        <View
-          style={[
-            {
-              flexDirection: "row",
-              alignItems: "center",
-              marginVertical: 10,
-              width: "80%",
-            },
-          ]}
-        >
-          <View style={[{ width: "20%" }]}>
             <View
               style={[
                 {
-                  width: screenHeight <= 592 ? 20 : 25,
-                  height: screenHeight <= 592 ? 20 : 25,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginVertical: 10,
+                  width: "80%",
                 },
               ]}
             >
-              <EmailIcon width="100%" height="100%" color={colores.bgOscuro} />
+              <View style={[{ width: "20%" }]}>
+                <View
+                  style={[
+                    {
+                      width: screenHeight <= 592 ? 20 : 25,
+                      height: screenHeight <= 592 ? 20 : 25,
+                    },
+                  ]}
+                >
+                  <EmailIcon
+                    width="100%"
+                    height="100%"
+                    color={colores.bgOscuro}
+                  />
+                </View>
+              </View>
+              <View>
+                <Text
+                  style={[{ fontWeight: "bold", fontSize: RFPercentage(2.2) }]}
+                >
+                  E-Mail
+                </Text>
+                <TextInput
+                  style={[
+                    {
+                      width: 200,
+                      borderBottomColor: "#000",
+                      borderBottomWidth: 1,
+                      fontSize: RFPercentage(2.4),
+                      paddingVertical: 5,
+                      height: 25,
+                    },
+                  ]}
+                />
+              </View>
             </View>
-          </View>
-          <View>
-            <Text style={[{ fontWeight: "bold", fontSize: RFPercentage(2.2) }]}>
-              E-Mail
-            </Text>
-            <Text style={[{ fontSize: RFPercentage(2.2) }]}>
-              fernando@gmail.com
-            </Text>
-          </View>
-        </View>
-        <View
-          style={[
-            {
-              flexDirection: "row",
-              alignItems: "center",
-              marginVertical: 10,
-              width: "80%",
-            },
-          ]}
-        >
-          <View style={[{ width: "20%" }]}>
             <View
               style={[
                 {
-                  width: screenHeight <= 592 ? 20 : 25,
-                  height: screenHeight <= 592 ? 20 : 25,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginVertical: 10,
+                  width: "80%",
                 },
               ]}
             >
-              <DayDeliveryIcon width="100%" height="100%" />
+              <View style={[{ width: "20%" }]}>
+                <View
+                  style={[
+                    {
+                      width: screenHeight <= 592 ? 20 : 25,
+                      height: screenHeight <= 592 ? 20 : 25,
+                    },
+                  ]}
+                >
+                  <DayDeliveryIcon width="100%" height="100%" />
+                </View>
+              </View>
+              <View>
+                <Text
+                  style={[{ fontWeight: "bold", fontSize: RFPercentage(2.2) }]}
+                >
+                  Costo domicilio día
+                </Text>
+                <TextInput
+                  style={[
+                    {
+                      width: 200,
+                      borderBottomColor: "#000",
+                      borderBottomWidth: 1,
+                      fontSize: RFPercentage(2.4),
+                      paddingVertical: 5,
+                      height: 25,
+                    },
+                  ]}
+                />
+              </View>
             </View>
-          </View>
-          <View>
-            <Text style={[{ fontWeight: "bold", fontSize: RFPercentage(2.2) }]}>
-              Costo domicilio día
-            </Text>
-            <Text style={[{ fontSize: RFPercentage(2.2) }]}>$2</Text>
-          </View>
-        </View>
-        <View
-          style={[
-            {
-              flexDirection: "row",
-              alignItems: "center",
-              marginVertical: 10,
-              width: "80%",
-            },
-          ]}
-        >
-          <View style={[{ width: "20%" }]}>
             <View
               style={[
                 {
-                  width: screenHeight <= 592 ? 20 : 25,
-                  height: screenHeight <= 592 ? 20 : 25,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginVertical: 10,
+                  width: "80%",
                 },
               ]}
             >
-              <NightDeliveryIcon width="100%" height="100%" />
+              <View style={[{ width: "20%" }]}>
+                <View
+                  style={[
+                    {
+                      width: screenHeight <= 592 ? 20 : 25,
+                      height: screenHeight <= 592 ? 20 : 25,
+                    },
+                  ]}
+                >
+                  <NightDeliveryIcon width="100%" height="100%" />
+                </View>
+              </View>
+              <View>
+                <Text
+                  style={[{ fontWeight: "bold", fontSize: RFPercentage(2.2) }]}
+                >
+                  Costo domicilio noche
+                </Text>
+                <TextInput
+                  style={[
+                    {
+                      width: 200,
+                      borderBottomColor: "#000",
+                      borderBottomWidth: 1,
+                      fontSize: RFPercentage(2.4),
+                      paddingVertical: 5,
+                      height: 25,
+                    },
+                  ]}
+                />
+              </View>
             </View>
-          </View>
-          <View>
-            <Text style={[{ fontWeight: "bold", fontSize: RFPercentage(2.2) }]}>
-              Costo domicilio noche
-            </Text>
-            <Text style={[{ fontSize: RFPercentage(2.2) }]}>$2.50</Text>
-          </View>
+          </ScrollView>
         </View>
 
         <View
           style={[
             {
               width: screenHeight <= 592 ? 200 : 225,
-              height: screenHeight <= 592 ? 10 : 50,
+              height: screenHeight <= 592 ? 8 : 50,
               marginTop: screenHeight <= 592 ? 10 : 40,
             },
           ]}
         >
-          <CustomButton>
+          <CustomButton
+            onPress={() => props.navigation.navigate("CambiarContrasena")}
+          >
             <Text
               style={{
                 fontWeight: "bold",
@@ -298,6 +387,28 @@ const MiCuenta = (props) => {
             </Text>
           </CustomButton>
         </View>
+        <View
+          style={[
+            {
+              width: screenHeight <= 592 ? 200 : 225,
+              height: screenHeight <= 592 ? 8 : 50,
+              marginTop: screenHeight <= 592 ? 40 : 10,
+              marginBottom: 10,
+            },
+          ]}
+        >
+          <CustomButton>
+            <Text
+              style={{
+                fontWeight: "bold",
+                textTransform: "uppercase",
+                fontSize: RFPercentage(2.2),
+              }}
+            >
+              Guardar
+            </Text>
+          </CustomButton>
+        </View>
       </View>
     </Container>
   );
@@ -306,6 +417,8 @@ const MiCuenta = (props) => {
 const styles = StyleSheet.create({
   screen: {
     alignItems: "center",
+
+    minHeight: 450,
   },
 });
 export default MiCuenta;
