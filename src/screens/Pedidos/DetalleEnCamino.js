@@ -7,6 +7,7 @@ import {
   FlatList,
 } from "react-native";
 import { RFPercentage } from "react-native-responsive-fontsize";
+import { heightPercentageToDP as hp, widthPercentageToDP as wp } from "react-native-responsive-screen";
 import CustomButton from "../../components/CustomButton";
 import BasicHeader from "../../components/Header/BasicHeader";
 import ChevronLeftIcon from "../../components/Icons/ChevronLeftIcon";
@@ -210,8 +211,8 @@ const DetalleSolicitado = (props) => {
           <View
             style={[
               {
-                width: 150,
-                height: 30,
+                width: wp(40),
+                height: hp(5),
               },
             ]}
           >
@@ -222,8 +223,8 @@ const DetalleSolicitado = (props) => {
           <View
             style={[
               {
-                width: 150,
-                height: 30,
+                width: wp(40),
+                height: hp(5),
               },
             ]}
           >

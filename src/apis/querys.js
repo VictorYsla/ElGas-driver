@@ -93,6 +93,7 @@ export const logIn = async (email = "", password = "") => {
 
 export const getCurrentDeliverys = async(uid='333333333333' ) => {
   const collection = 'plant_pedidos_en_camino'
+  // const collection = 'plant_pedidos_en_pendientes'
   return await firebase
     .firestore()
     .collection(collection)
