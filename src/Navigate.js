@@ -19,14 +19,13 @@ import DetalleSolicitado from "./screens/Pedidos/DetalleSolicitado";
 import DetalleEnCamino from "./screens/Pedidos/DetalleEnCamino";
 import Facturacion from "./screens/Facturacion/Facturacion";
 import CambiarContraseña from "./screens/MiCuenta/CambiarContraseña";
+import NotificacionesEjemplo from "./pruebas/NotificacionesEjemplo";
 
 const Navegador = (props) => {
   console.log(props);
 
   const Stack = createStackNavigator();
   const isLogged = useSelector((state) => state.login.login?.isLogged);
-
-  console.log("isLogged", isLogged);
 
   if (!isLogged) {
     return (
@@ -55,8 +54,13 @@ const Navegador = (props) => {
         screenOptions={{
           headerShown: false,
         }}
-        initialRouteName="Inicio"
+        initialRouteName="NotificacionesEjemplo"
       >
+        <Stack.Screen
+          name="NotificacionesEjemplo"
+          component={NotificacionesEjemplo}
+        />
+
         <Stack.Screen name="Inicio" component={Inicio} />
 
         {/* Mi Cuenta */}
