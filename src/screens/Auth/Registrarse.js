@@ -24,7 +24,7 @@ const initialValues = {
   password: "",
   phone: "",
 };
-const Registrarse = ({ dispatch }) => {
+const Registrarse = ({ dispatch, navigation }) => {
   const form = useForm({ initialValues });
   const register = () => {
     console.log("Press", ValidateForm(form));
@@ -34,6 +34,7 @@ const Registrarse = ({ dispatch }) => {
       singUp(email, name, password, phone).then((x) => {
         console.log("Resposneeee: ", x);
         if (x.type !== "error") {
+          dispatch(actions.actualizarLogin({ ...x.value, isLogged: true }));
         }
       });
     } else {
