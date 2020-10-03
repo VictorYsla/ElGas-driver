@@ -17,12 +17,19 @@ import StarIcon from "../../components/Icons/StarIcon";
 import Container from "../../generales/Container";
 import { actions } from "../../redux";
 import {getCurrentDeliverys} from '../../apis/querys'
+import MapView, {Marker} from 'react-native-maps';
+import * as Location from 'expo-location';
+import MarkerIcon from "../../components/Icons/Marker";
 
 const MisPedidos = (props) => {
   const [requested, setRequested] = useState(true);
   const [onTheWay, setOnTheWay] = useState(false);
   const [finished, setFinished] = useState(false);
   const [currentDeliverys, setCurrentDeliverys] = useState([])
+  const [location, setLocation] = useState({
+    latitude: 74.000,
+    longitude: -4.000
+})
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -30,6 +37,22 @@ const MisPedidos = (props) => {
       dispatch(actions.actualizarUbicacion(ruta));
     actualizarNavegacion(props.route.name);
   }, []);
+
+  useEffect(()=>{
+    GetCurrentLocation()
+  },[])
+  async function GetCurrentLocation (){
+      let { status } = await Location.requestPermissionsAsync();
+      if (status !== 'granted') {
+          setErrorMsg('Permission to access location was denied');
+      }
+      let location = await Location.getCurrentPositionAsync({});
+      //console.log(location)
+      setLocation({
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude
+      });
+  }
 
   useEffect(()=>{
     getCurrentDeliverys('333333333333')
@@ -227,9 +250,17 @@ const MisPedidos = (props) => {
       {onTheWay && (
         <View
           style={[
-            { flex: 1, backgroundColor: "red", height: "100%", width: "100%" },
+            { flex: 1, /* backgroundColor: "red", */ height: "100%", width: "100%" },
           ]}
-        ></View>
+        >
+          <MapView style={{flex:1}}
+                    initialRegion={{...location, latitudeDelta:0.2, longitudeDelta:0.2}}
+                    showsMyLocationButton
+                    showsUserLocation
+                >
+                    <Marker coordinate={location} image={()=><MarkerIcon />}  />
+                </MapView>
+        </View>
       )}
     </Container>
   );

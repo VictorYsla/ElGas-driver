@@ -30,7 +30,7 @@ const Navegador = (props) => {
         screenOptions={{
           headerShown: false,
         }}
-        initialRouteName="NotificacionesEjemplo"
+        initialRouteName="PantallaLogin"
       >
         {/* Login Process */}
         <Stack.Screen name="PantallaLogin" component={PantallaLogin} />
