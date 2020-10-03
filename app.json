@@ -20,7 +20,12 @@
     "android": {
       "package": "com.elgasdriver",
       "versionCode": 5,
+      "googleServicesFile": "./google-services.json",
+      "useNextNotificationsApi": true,
       "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"]
+    },
+    "notification": {
+      "icon": "./assets/icon.png"
     },
     "web": {
       "favicon": "./assets/favicon.png"

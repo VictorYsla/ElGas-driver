@@ -19,6 +19,7 @@ import DetalleSolicitado from "./screens/Pedidos/DetalleSolicitado";
 import DetalleEnCamino from "./screens/Pedidos/DetalleEnCamino";
 import Facturacion from "./screens/Facturacion/Facturacion";
 import CambiarContraseña from "./screens/MiCuenta/CambiarContraseña";
+import NotificacionesEjemplo from "./pruebas/NotificacionesEjemplo";
 
 const Navegador = (props) => {
   const Stack = createStackNavigator();
@@ -29,10 +30,14 @@ const Navegador = (props) => {
         screenOptions={{
           headerShown: false,
         }}
-        initialRouteName="PantallaLogin"
+        initialRouteName="NotificacionesEjemplo"
       >
         {/* Login Process */}
         <Stack.Screen name="PantallaLogin" component={PantallaLogin} />
+        <Stack.Screen
+          name="NotificacionesEjemplo"
+          component={NotificacionesEjemplo}
+        />
         <Stack.Screen name="Registrarse" component={Registrarse} />
         <Stack.Screen
           name="RecuperarContrasena"
