@@ -14,14 +14,15 @@ import ChevronLeftIcon from "../../components/Icons/ChevronLeftIcon";
 import ChevronRightIcon from "../../components/Icons/ChevronRightIcon";
 import MoneyMarkerIcon from "../../components/Icons/MoneyMarker";
 import StarIcon from "../../components/Icons/StarIcon";
-
 import Container from "../../generales/Container";
 import { actions } from "../../redux";
+import {getCurrentDeliverys} from '../../apis/querys'
 
 const MisPedidos = (props) => {
   const [requested, setRequested] = useState(true);
   const [onTheWay, setOnTheWay] = useState(false);
   const [finished, setFinished] = useState(false);
+  const [currentDeliverys, setCurrentDeliverys] = useState([])
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -29,6 +30,27 @@ const MisPedidos = (props) => {
       dispatch(actions.actualizarUbicacion(ruta));
     actualizarNavegacion(props.route.name);
   }, []);
+
+  useEffect(()=>{
+    getCurrentDeliverys('333333333333')
+    .then(response =>{
+      
+      const array = []
+      response.forEach((value)=>{
+        const obj = {
+          date: `${new Date(value.fecha).getFullYear()}-${new Date(value.fecha).getMonth()+1}-${new Date(value.fecha).getDate()}`,
+          time : `34:35:21`,
+          title: value.direccion.nombre,
+          userName: value.nombre_cliente,
+          payType: value.forma_pago,
+          products: value.productos 
+        }
+        array.push(obj)
+      })
+      setCurrentDeliverys(array)
+      console.log('Respo: ', array);
+    })
+  }, [])
 
   const dummy_data = [
     {
@@ -148,7 +170,7 @@ const MisPedidos = (props) => {
           </HeaderTabButton>
         </View>
       </View>
-      {requested && (
+      {/* requested */ currentDeliverys && (
         <View
           style={{
             flex: 1,
@@ -159,7 +181,7 @@ const MisPedidos = (props) => {
           }}
         >
           <FlatList
-            data={dummy_data}
+            data={currentDeliverys}//dummy_data
             renderItem={({ item }) => (
               <RequestedListItem item={item} navigation={props.navigation} />
             )}
@@ -215,18 +237,19 @@ const MisPedidos = (props) => {
 
 // Solicitados List Item
 const RequestedListItem = ({ item, navigation }) => {
-  const date = item.date.split("T");
-  const formattedTime = date[1].substring(0, 8);
+  const date = item.date
+  const formattedTime = item.time;
+  console.log('itm', item);
 
   return (
     <TouchableNativeFeedback
       onPress={() =>
         navigation.navigate("DetalleSolicitado", {
           item: {
-            ...item,
+            ...item,/* 
             title: "N73",
             payType: "Efectivo",
-            product: { name: "Gas 15Kg", price: 1.6, qty: 5 },
+            product: { name: "Gas 15Kg", price: 1.6, qty: 5 }, */
           },
         })
       }
@@ -243,7 +266,7 @@ const RequestedListItem = ({ item, navigation }) => {
         <View style={{ width: "50%" }}>
           <Text style={styles.user}>N73</Text>
           <View style={[styles.row, { justifyContent: "space-between" }]}>
-            <Text style={[styles.label]}>{`${date[0]}`}</Text>
+            <Text style={[styles.label]}>{`${date}`}</Text>
             <Text style={[styles.label]}>{formattedTime}</Text>
           </View>
         </View>
