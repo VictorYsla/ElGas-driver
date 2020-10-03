@@ -1,7 +1,7 @@
 import React from "react";
 import { View, StyleSheet, Text, Platform } from "react-native";
 
-import { connect } from "react-redux";
+import { useSelector } from "react-redux";
 
 import { NavigationContainer } from "@react-navigation/native";
 import {
@@ -21,7 +21,33 @@ import Facturacion from "./screens/Facturacion/Facturacion";
 import CambiarContraseña from "./screens/MiCuenta/CambiarContraseña";
 
 const Navegador = (props) => {
+  console.log(props);
+
   const Stack = createStackNavigator();
+  const isLogged = useSelector((state) => state.login.login?.isLogged);
+
+  console.log("isLogged", isLogged);
+
+  if (!isLogged) {
+    return (
+      <NavigationContainer>
+        <Stack.Navigator
+          screenOptions={{
+            headerShown: false,
+          }}
+          initialRouteName="PantallaLogin"
+        >
+          {/* Login Process */}
+          <Stack.Screen name="PantallaLogin" component={PantallaLogin} />
+          <Stack.Screen name="Registrarse" component={Registrarse} />
+          <Stack.Screen
+            name="RecuperarContrasena"
+            component={RecuperarContrasena}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    );
+  }
 
   return (
     <NavigationContainer>
@@ -29,16 +55,8 @@ const Navegador = (props) => {
         screenOptions={{
           headerShown: false,
         }}
-        initialRouteName="PantallaLogin"
+        initialRouteName="Inicio"
       >
-        {/* Login Process */}
-        <Stack.Screen name="PantallaLogin" component={PantallaLogin} />
-        <Stack.Screen name="Registrarse" component={Registrarse} />
-        <Stack.Screen
-          name="RecuperarContrasena"
-          component={RecuperarContrasena}
-        />
-
         <Stack.Screen name="Inicio" component={Inicio} />
 
         {/* Mi Cuenta */}
@@ -110,8 +128,4 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = (state) => ({
-  login: state.login,
-});
-
-export default connect(mapStateToProps)(Navegador);
+export default Navegador;
