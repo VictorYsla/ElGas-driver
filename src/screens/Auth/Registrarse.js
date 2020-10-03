@@ -17,6 +17,8 @@ import { connect } from "react-redux";
 import { actions } from "../../redux/index";
 import CustomButton from "../../components/CustomButton";
 import RegisterIcon from "../../components/Icons/RegisterIcon";
+import AuthModal from '../../components/Modals/AuthModal'
+import LoadingModal from '../../components/Modals/LoadingModal'
 
 const initialValues = {
   name: "",
@@ -24,16 +26,24 @@ const initialValues = {
   password: "",
   phone: "",
 };
-const Registrarse = ({ dispatch }) => {
+const Registrarse = ({ dispatch, navigation }) => {
   const form = useForm({ initialValues });
+  const [modal, setModal] = useState({show:false, message:''})
+  const [loading, setLoaing] = useState({show:false, message:''})
   const register = () => {
     console.log("Press", ValidateForm(form));
     const { name, email, password, phone } = form.fields;
     if (ValidateForm(form)) {
+      setLoaing({show:true})
       console.log("Sii");
       singUp(email, name, password, phone).then((x) => {
         console.log("Resposneeee: ", x);
         if (x.type !== "error") {
+          setLoaing({show:false})
+          dispatch(actions.actualizarLogin({ ...x.value, isLogged: true }));
+        }else{
+          setModal({show:true, message:'Ocurrio un error, parece el correo o la contraseña no son correctas.'})
+          setLoaing({show:false})
         }
       });
     } else {
@@ -43,6 +53,8 @@ const Registrarse = ({ dispatch }) => {
 
   return (
     <Container footer={false} styleContainer={styles.screen}>
+      <AuthModal modal={modal} setModal={setModal} />
+      <LoadingModal modal={loading} setModal={setLoaing}  />
       <View style={styles.imageContainer}>
         <RegisterIcon height="100%" width="100%" />
       </View>

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { RFPercentage } from "react-native-responsive-fontsize";
 //importaciones necesarias para redux//
-import { connect } from "react-redux";
+import { connect, useDispatch, useSelector } from "react-redux";
 
 import BasicHeader from "./components/Header/BasicHeader";
 import BillingIcon from "./components/Icons/BillingIcon";
@@ -13,8 +13,12 @@ import ProfileIcon from "./components/Icons/ProfileIcon";
 import SearchIcon from "./components/Icons/SearchIcon";
 import StarIcon from "./components/Icons/StarIcon";
 import Container from "./generales/Container";
+import { actualizarLogin } from "./redux/reducers/login";
 
 const Inicio = (props) => {
+  const login = useSelector((state) => state.login.login);
+  const dispatch = useDispatch();
+
   return (
     <Container
       style={styles.container}
@@ -38,9 +42,9 @@ const Inicio = (props) => {
       >
         <View style={[{ alignItems: "center", width: "50%" }]}>
           <Text style={[{ fontWeight: "bold", fontSize: RFPercentage(3.0) }]}>
-            ¡Hola Patricio Idrovo!
+            ¡Hola {login.userName}!
           </Text>
-          <Text>patricio@gas.com</Text>
+          <Text>{login.email}</Text>
           <View
             style={[
               {
@@ -126,7 +130,20 @@ const Inicio = (props) => {
               </Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity activeOpacity={0.6}>
+          <TouchableOpacity
+            activeOpacity={0.6}
+            onPress={() =>
+              dispatch(
+                actualizarLogin({
+                  isLogged: false,
+                  uid: "",
+                  userName: "",
+                  email: "",
+                  token: "",
+                })
+              )
+            }
+          >
             <View style={[{ flexDirection: "row", alignItems: "center" }]}>
               <View style={[{ width: 30, height: 30, marginVertical: 15 }]}>
                 <LogoutIcon width="100%" height="100%" />
@@ -159,5 +176,4 @@ const styles = StyleSheet.create({
   },
 });
 //
-const mapStateToProps = (state) => ({ login: state.login });
-export default connect(mapStateToProps)(Inicio);
+export default Inicio;

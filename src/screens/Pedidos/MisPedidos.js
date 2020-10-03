@@ -20,6 +20,7 @@ import {getCurrentDeliverys} from '../../apis/querys'
 import MapView, {Marker} from 'react-native-maps';
 import * as Location from 'expo-location';
 import MarkerIcon from "../../components/Icons/Marker";
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 
 const MisPedidos = (props) => {
   const [requested, setRequested] = useState(true);
@@ -54,8 +55,11 @@ const MisPedidos = (props) => {
       });
   }
 
+  
   useEffect(()=>{
-    getCurrentDeliverys('333333333333')
+    const type = requested?'Solicitado':onTheWay?'En camino': 'Terminado'
+    console.log('InuseEfect', type);
+    getCurrentDeliverys('333333333333', type)
     .then(response =>{
       
       const array = []
@@ -73,7 +77,7 @@ const MisPedidos = (props) => {
       setCurrentDeliverys(array)
       console.log('Respo: ', array);
     })
-  }, [])
+  }, [requested, onTheWay, finished])
 
   const dummy_data = [
     {
@@ -258,7 +262,9 @@ const MisPedidos = (props) => {
                     showsMyLocationButton
                     showsUserLocation
                 >
-                    <Marker coordinate={location} image={()=><MarkerIcon />}  />
+                    <Marker coordinate={location} >
+                      <MarkerIcon width={wp(20)} height={hp(4)} />
+                    </Marker>
                 </MapView>
         </View>
       )}

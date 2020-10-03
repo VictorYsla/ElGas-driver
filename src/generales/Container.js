@@ -17,6 +17,7 @@ import SvgOrders from "../components/Icons/OrdersIcon";
 import CardIcon from "../components/Icons/CardIcon";
 import SvgLogout from "../components/Icons/LogoutIcon";
 import { actions } from "../redux";
+import { actualizarLogin } from "../redux/reducers/login";
 
 const { width, height } = Dimensions.get("window");
 
@@ -180,9 +181,23 @@ const Item = ({ navigation, ruta, texto, icon }) => {
   return (
     <TouchableOpacity
       onPress={() => {
-        navigation.navigate(ruta);
-        (ruta !== "Inicio" || ruta !== "Logout") &&
-          dispatch(actions.actualizarUbicacion(ruta));
+        if (ruta) {
+          navigation.navigate(ruta);
+        }
+        ruta === "Inicio" ||
+        ruta === "MiCuenta" ||
+        ruta === "MisPedidos" ||
+        ruta === "MiFacturacion"
+          ? dispatch(actions.actualizarUbicacion(ruta))
+          : dispatch(
+              actualizarLogin({
+                isLogged: false,
+                uid: "",
+                userName: "",
+                email: "",
+                token: "",
+              })
+            );
       }}
       style={styles.tabButton}
     >

@@ -91,13 +91,13 @@ export const logIn = async (email = "", password = "") => {
     });
 };
 
-export const getCurrentDeliverys = async(uid='333333333333' ) => {
-  const collection = 'plant_pedidos_en_camino'
-  // const collection = 'plant_pedidos_en_pendientes'
+export const getCurrentDeliverys = async (uid = "333333333333", type='Solicitado') => {
+  const collection = "plant_pedidos_en_camino";
   return await firebase
     .firestore()
     .collection(collection)
-    .where('id_driver', '==', `${uid}`)
+    .where("id_driver", "==", `${uid}`)
+    .where('estado', '==', `${type}`)
     .get()
     .then((x) => {
       const values = [];
@@ -106,10 +106,10 @@ export const getCurrentDeliverys = async(uid='333333333333' ) => {
       });
       return values;
     });
-}
+};
 
-export const getDeliverys = async( ) => {
-  const collection = 'plant_pedidos_pendientes'
+export const getDeliverys = async () => {
+  const collection = "plant_pedidos_pendientes";
   return await firebase
     .firestore()
     .collection(collection)
@@ -121,4 +121,4 @@ export const getDeliverys = async( ) => {
       });
       return values;
     });
-}
+};
