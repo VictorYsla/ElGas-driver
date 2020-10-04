@@ -4,7 +4,8 @@ import {
   Text,
   StyleSheet,
   TouchableNativeFeedback,
-  FlatList, ScrollView
+  FlatList, ScrollView,
+  Image
 } from "react-native";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
@@ -108,15 +109,24 @@ const DetalleSolicitado = (props) => {
           
         </View>
 
-        <ScrollView style={{flex:1, marginHorizontal:wp(5), marginTop:-hp(5)}} >
-          {
-            fetchedItemData.products.map((value, index)=>{
-              return(
-                <DeliveryItems index={index} name={value.name} price={value.price} quantity={value.quantity}   />
-              )
-            })
-          }
-        </ScrollView>
+        <View style={{height:hp(18), marginBottom:hp(1.5)}} >
+          <ScrollView style={{ marginHorizontal:wp(5), marginTop:-hp(5)}} >
+            {
+              fetchedItemData.products.map((value, index)=>{
+                return(
+                  <>
+                  <DeliveryItems index={index} name={value.name} price={value.price} quantity={value.quantity} uri={value.image_url} />
+                  <DeliveryItems index={index} name={value.name} price={value.price} quantity={value.quantity} uri={value.image_url} />
+                  <DeliveryItems index={index} name={value.name} price={value.price} quantity={value.quantity} uri={value.image_url} />
+                  <DeliveryItems index={index} name={value.name} price={value.price} quantity={value.quantity} uri={value.image_url} />
+                  <DeliveryItems index={index} name={value.name} price={value.price} quantity={value.quantity} uri={value.image_url} />
+                  </>
+                  
+                )
+              })
+            }
+          </ScrollView>
+        </View>
 
         {/* Summary */}
 
@@ -161,7 +171,8 @@ const DetalleSolicitado = (props) => {
   );
 };
 
-const DeliveryItems = ({name='Item', price=0.0, quantity=3, index}) => {
+const DeliveryItems = ({name='Item', price=0.0, quantity=3, index, uri}) => {
+  console.log('Props', uri);
   return(
     <View
             style={[
@@ -173,10 +184,8 @@ const DeliveryItems = ({name='Item', price=0.0, quantity=3, index}) => {
             ]}
             key={index}
           >
-            <View style={[{ width: "20%", alignItems: "center" }]}>
-              <View
-                style={[{ backgroundColor: "blue", height: 50, width: 25 }]}
-              />
+            <View style={[{ width: "20%", alignItems: "center", justifyContent:'center' }]}>
+              <Image source={{uri: uri}} style={{width:wp(10), height:hp(5)}} width={wp(10)} height={hp(5)} />
             </View>
             <View
               style={[

@@ -5,6 +5,8 @@ import {
   StyleSheet,
   TouchableNativeFeedback,
   FlatList,
+  ScrollView,
+  Image
 } from "react-native";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from "react-native-responsive-screen";
@@ -18,9 +20,9 @@ import Container from "../../generales/Container";
 
 const DetalleSolicitado = (props) => {
   const fetchedItemData = props.route.params?.item;
-
-  const date = fetchedItemData.date.split("T");
-  const formattedTime = date[1].substring(0, 8);
+  console.log('Recibido: ', fetchedItemData);
+  const date = fetchedItemData.date;
+  const formattedTime = fetchedItemData.time;
 
   return (
     <Container styleContainer={styles.screen} navigation={props.navigation}>
@@ -42,7 +44,7 @@ const DetalleSolicitado = (props) => {
         <View
           style={{
             width: "80%",
-            height: "60%",
+            height: "50%",
             justifyContent: "center",
           }}
         >
@@ -55,7 +57,7 @@ const DetalleSolicitado = (props) => {
               <Text style={[styles.label]}>
                 Hora Solicitada: {formattedTime}
               </Text>
-              <Text style={[styles.label]}>Fecha Solicitada: {date[0]}</Text>
+              <Text style={[styles.label]}>Fecha Solicitada: {date}</Text>
             </View>
             <View>
               <View
@@ -128,49 +130,25 @@ const DetalleSolicitado = (props) => {
             </View>
             <ChevronRightIcon width={15} height={15} />
           </View>
+        </View>
 
-          <View
-            style={[
-              {
-                flexDirection: "row",
-                justifyContent: "space-between",
-                marginVertical: 5,
-              },
-            ]}
-          >
-            <View style={[{ width: "20%", alignItems: "center" }]}>
-              <View
-                style={[{ backgroundColor: "blue", height: 50, width: 25 }]}
-              />
-            </View>
-            <View
-              style={[
-                {
-                  width: "60%",
-                  justifyContent: "center",
-                },
-              ]}
-            >
-              <Text style={styles.title}>{fetchedItemData.product.name}</Text>
-              <Text style={styles.productLabel}>
-                ${fetchedItemData.product.price}
-              </Text>
-            </View>
-            <View
-              style={[
-                {
-                  width: "20%",
-
-                  justifyContent: "center",
-                  alignItems: "center",
-                },
-              ]}
-            >
-              <Text style={styles.productLabel}>
-                {fetchedItemData.product.qty}
-              </Text>
-            </View>
-          </View>
+        <View style={{height:hp(18), marginBottom:hp(1.5)}} >
+          <ScrollView style={{ marginHorizontal:wp(5), marginTop:-hp(5)}} >
+            {
+              fetchedItemData.products.map((value, index)=>{
+                return(
+                  <>
+                  <DeliveryItems index={index} name={value.name} price={value.price} quantity={value.quantity} uri={value.image_url} />
+                  <DeliveryItems index={index} name={value.name} price={value.price} quantity={value.quantity} uri={value.image_url} />
+                  <DeliveryItems index={index} name={value.name} price={value.price} quantity={value.quantity} uri={value.image_url} />
+                  <DeliveryItems index={index} name={value.name} price={value.price} quantity={value.quantity} uri={value.image_url} />
+                  <DeliveryItems index={index} name={value.name} price={value.price} quantity={value.quantity} uri={value.image_url} />
+                  </>
+                  
+                )
+              })
+            }
+          </ScrollView>
         </View>
 
         {/* Summary */}
@@ -182,7 +160,7 @@ const DetalleSolicitado = (props) => {
               alignItems: "center",
               paddingVertical: 5,
               width: "100%",
-              marginTop: 20,
+              marginTop: 1,
             },
           ]}
         >
@@ -237,6 +215,53 @@ const DetalleSolicitado = (props) => {
     </Container>
   );
 };
+
+
+const DeliveryItems = ({name='Item', price=0.0, quantity=3, index, uri}) => {
+  console.log('Props', uri);
+  return(
+    <View
+            style={[
+              {
+                flexDirection: "row",
+                justifyContent: "space-between",
+                marginVertical: 5,
+              },
+            ]}
+            key={index}
+          >
+            <View style={[{ width: "20%", alignItems: "center", justifyContent:'center' }]}>
+              <Image source={{uri: uri}} style={{width:wp(10), height:hp(5)}} width={wp(10)} height={hp(5)} />
+            </View>
+            <View
+              style={[
+                {
+                  width: "60%",
+                  justifyContent: "center",
+                },
+              ]}
+            >
+              <Text style={styles.title}>{name} </Text>
+              <Text style={styles.productLabel}>
+                ${price}
+              </Text>
+            </View>
+            <View
+              style={[
+                {
+                  width: "20%",
+                  justifyContent: "center",
+                  alignItems: "center",
+                },
+              ]}
+            >
+              <Text style={styles.productLabel}>
+                {quantity}
+              </Text>
+            </View>
+          </View>
+  )
+}
 
 const styles = StyleSheet.create({
   screen: {
