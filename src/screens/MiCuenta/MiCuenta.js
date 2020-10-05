@@ -21,7 +21,11 @@ import {
   getCurrentDeliverys,
   getDeliverys,
   postCollection,
+
 } from "../../apis/querys";
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import navigation from "../../redux/reducers/navigation";
 
 const initialValues = {
   name: "",
@@ -32,6 +36,36 @@ const initialValues = {
   day_delivery: "",
   nigth_delivery: "",
 };
+
+const dataPushFirebase ={
+  id_pedido:'3uhe3u',
+  nombre_cliente: 'Roberto Salazar',
+  id_cliente: 'wjiefii23',
+  estrellas:4,
+  forma_pago:'Efectivo',
+  fecha: +new Date(),
+  cliente_token:'7w833yerewr',
+  direccion:{
+    latitud: -73.3434,
+    longitud: -0.63723,
+    nombre:'Casa 1',
+    informacion_adicional:{
+      apartamento: 3,
+      numero: 245
+    }
+  },
+  productos:[
+    {
+      description: 'Válvula de gran capacidad.',
+      capacity: 45,
+      unity:'kg',
+      id:'6734ry3',
+      name:'Válvula',
+      price:1.6,
+      quantity:4
+    }
+  ]
+}
 
 const MiCuenta = (props) => {
   const { screenHeight } = pantalla;
@@ -49,9 +83,11 @@ const MiCuenta = (props) => {
     // getDeliverys().then((response) => {
     //   console.log("Resposne2: ", response);
     // });
+    // postCollection('plant_pedidos_en_camino', dataPushFirebase)
     const actualizarRuta = (ruta) =>
       dispatch(actions.actualizarUbicacion(ruta));
     actualizarRuta(props.route.name);
+
   }, []);
   // console.log('Form: ', form.fields);
 
@@ -416,51 +452,56 @@ const MiCuenta = (props) => {
           </ScrollView>
         </View>
 
-        <View
-          style={[
-            {
-              width: screenHeight <= 592 ? 200 : 225,
-              height: screenHeight <= 592 ? 8 : 50,
-              marginTop: screenHeight <= 592 ? 10 : 40,
-            },
-          ]}
-        >
-          <CustomButton
-            onPress={() => props.navigation.navigate("CambiarContrasena")}
+        <View style={{flexDirection:'column', marginTop:hp(2), }} >
+          <View
+            style={[
+              {
+                width: wp(44),
+                height: hp(3),
+                marginHorizontal:wp(2),
+                justifyContent:'center',
+                marginBottom:hp(1)
+              },
+            ]}
           >
-            <Text
-              style={{
-                fontWeight: "bold",
-                textTransform: "uppercase",
-                fontSize: RFPercentage(2.2),
-              }}
-            >
-              Cambiar Contraseña
-            </Text>
-          </CustomButton>
+            <TouchableOpacity onPress={()=>props.navigation.navigate('CambiarContrasena')} >
+              <Text
+                style={{
+                  fontWeight: "bold",
+                  textTransform: "uppercase",
+                  fontSize: RFPercentage(2),
+                  textAlign:'center',
+                  color:colores.amarillo,
+                  textAlignVertical:'center'
+                }}
+              >
+                Cambiar Contraseña
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <View
+            style={[
+              {
+                width: wp(44),
+                height: hp(8),
+                marginHorizontal:wp(2)
+              },
+            ]}
+          >
+            <CustomButton onPress={onSubmit} >
+              <Text
+                style={{
+                  fontWeight: "bold",
+                  textTransform: "uppercase",
+                  fontSize: RFPercentage(2),
+                }}
+              >
+                Guardar
+              </Text>
+            </CustomButton>
+          </View>
         </View>
-        <View
-          style={[
-            {
-              width: screenHeight <= 592 ? 200 : 225,
-              height: screenHeight <= 592 ? 8 : 50,
-              marginTop: screenHeight <= 592 ? 40 : 10,
-              marginBottom: 10,
-            },
-          ]}
-        >
-          <CustomButton onPress={onSubmit}>
-            <Text
-              style={{
-                fontWeight: "bold",
-                textTransform: "uppercase",
-                fontSize: RFPercentage(2.2),
-              }}
-            >
-              Guardar
-            </Text>
-          </CustomButton>
-        </View>
+
       </View>
     </Container>
   );

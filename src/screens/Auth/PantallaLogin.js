@@ -23,6 +23,8 @@ import { ValidateForm } from "../../functions/ValidateForm";
 import { auth, logIn } from "../../apis/querys";
 import { connect, useDispatch } from "react-redux";
 import { actions } from "../../redux/index";
+import AuthModal from '../../components/Modals/AuthModal'
+import LoadingModal from '../../components/Modals/LoadingModal'
 
 const initialValues = {
   email: "",
@@ -34,37 +36,35 @@ const PantallaLogin = (props) => {
   const dispatch = useDispatch();
   // console.log(form);
   const [loginResponse, setLoginResponse] = useState(null);
+  const [modal, setModal] = useState({show:false, message:''})
+  const [loading, setLoaing] = useState({show:false, message:''})
 
   const onLogin = () => {
     console.log("Press", ValidateForm(form));
     const { email, password } = form.fields;
 
     if (ValidateForm(form)) {
+      setLoaing({show:true})
       console.log("Sii");
       logIn(email, password).then((x) => {
         console.log("Responseeee: ", x);
         if (x.type !== "error") {
           dispatch(actions.actualizarLogin({ ...x.value, isLogged: true }));
+          setLoaing({show:false})
+        }else{
+          setModal({show:true, message:'Ocurrio un error, parece el correo o la contraseña no son correctas.'})
+          setLoaing({show:false})
         }
       });
     } else {
       Alert.alert("Todos los campos son obligatorios");
     }
   };
-  useEffect(() => {
-    console.log(form, loginResponse);
-    if (loginResponse) {
-      if (loginResponse.type === "success") {
-        // console.log( 'values', loginResponse.value)
-        // console.log('dis:', props.dispatch)
-        props.dispatch(
-          actions.actualizarLogin({ ...loginResponse.value, isLogged: true })
-        );
-      }
-    }
-  }, [loginResponse]);
+
   return (
     <Container styleContainer={styles.screen} footer={false}>
+      <AuthModal modal={modal} setModal={setModal} />
+      <LoadingModal modal={loading} setModal={setLoaing}  />
       <View style={styles.logo}>
         <ElGasLogo height="100%" width="100%" />
       </View>

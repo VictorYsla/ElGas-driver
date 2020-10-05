@@ -14,14 +14,24 @@ import ChevronLeftIcon from "../../components/Icons/ChevronLeftIcon";
 import ChevronRightIcon from "../../components/Icons/ChevronRightIcon";
 import MoneyMarkerIcon from "../../components/Icons/MoneyMarker";
 import StarIcon from "../../components/Icons/StarIcon";
-
 import Container from "../../generales/Container";
 import { actions } from "../../redux";
+import {getCurrentDeliverys} from '../../apis/querys'
+import MapView, {Marker} from 'react-native-maps';
+import * as Location from 'expo-location';
+import MarkerIcon from "../../components/Icons/Marker";
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
+import {useNavigation} from '@react-navigation/native'
 
 const MisPedidos = (props) => {
   const [requested, setRequested] = useState(true);
   const [onTheWay, setOnTheWay] = useState(false);
   const [finished, setFinished] = useState(false);
+  const [currentDeliverys, setCurrentDeliverys] = useState([])
+  const [location, setLocation] = useState({
+    latitude: 74.000,
+    longitude: -4.000
+})
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -29,6 +39,48 @@ const MisPedidos = (props) => {
       dispatch(actions.actualizarUbicacion(ruta));
     actualizarNavegacion(props.route.name);
   }, []);
+
+  useEffect(()=>{
+    GetCurrentLocation()
+  },[])
+  async function GetCurrentLocation (){
+      let { status } = await Location.requestPermissionsAsync();
+      if (status !== 'granted') {
+          setErrorMsg('Permission to access location was denied');
+      }
+      let location = await Location.getCurrentPositionAsync({});
+      //console.log(location)
+      setLocation({
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude
+      });
+  }
+
+  
+  useEffect(()=>{
+    // const type = requested?'Solicitado':onTheWay?'En camino': 'Terminado'
+    const type = 'Solicitado'
+    // console.log('InuseEfect', type);
+    getCurrentDeliverys('333333333333', type)
+    .then(response =>{
+      
+      const array = []
+      response.forEach((value)=>{
+        const obj = {
+          date: `${new Date(value.fecha).getFullYear()}-${new Date(value.fecha).getMonth()+1}-${new Date(value.fecha).getDate()}`,
+          time : `34:35:21`,
+          title: value.direccion.nombre,
+          userName: value.nombre_cliente,
+          payType: value.forma_pago,
+          products: value.productos,
+          id: value.id
+        }
+        array.push(obj)
+      })
+      setCurrentDeliverys(array)
+      console.log('Respo: ', array);
+    })
+  }, [requested, onTheWay, finished])
 
   const dummy_data = [
     {
@@ -83,7 +135,7 @@ const MisPedidos = (props) => {
         style={{
           width: "100%",
           alignItems: "center",
-          backgroundColor: "red",
+          // backgroundColor: "red",
         }}
       >
         <View style={[styles.row, styles.tabsButtonsContainer]}>
@@ -148,7 +200,7 @@ const MisPedidos = (props) => {
           </HeaderTabButton>
         </View>
       </View>
-      {requested && (
+      {requested && currentDeliverys && (
         <View
           style={{
             flex: 1,
@@ -159,7 +211,7 @@ const MisPedidos = (props) => {
           }}
         >
           <FlatList
-            data={dummy_data}
+            data={currentDeliverys}//dummy_data
             renderItem={({ item }) => (
               <RequestedListItem item={item} navigation={props.navigation} />
             )}
@@ -167,7 +219,7 @@ const MisPedidos = (props) => {
           />
         </View>
       )}
-      {onTheWay && (
+      {onTheWay && currentDeliverys && (
         <View
           style={{
             width: "100%",
@@ -177,7 +229,7 @@ const MisPedidos = (props) => {
           }}
         >
           <FlatList
-            data={dummy_data}
+            data={currentDeliverys}
             renderItem={({ item }) => (
               <EnCaminoItem item={item} navigation={props.navigation} />
             )}
@@ -185,17 +237,18 @@ const MisPedidos = (props) => {
           />
         </View>
       )}
-      {finished && (
+      {finished && currentDeliverys && (
         <View
           style={{
             flex: 1,
-            width: "90%",
-            paddingHorizontal: 20,
+            width: wp(100),
+            paddingHorizontal: 0,
             height: "100%",
+            // marginHorizontal:wp(2)
           }}
         >
           <FlatList
-            data={dummy_data}
+            data={currentDeliverys}
             contentContainerStyle={[{ paddingVertical: 10 }]}
             renderItem={({ item }) => <FinishedItem item={item} />}
             showsVerticalScrollIndicator={false}
@@ -205,28 +258,123 @@ const MisPedidos = (props) => {
       {onTheWay && (
         <View
           style={[
-            { flex: 1, backgroundColor: "red", height: "100%", width: "100%" },
+            { flex: 1, /* backgroundColor: "red", */ height: "100%", width: "100%" },
           ]}
-        ></View>
+        >
+          <MapView style={{flex:1}}
+                    initialRegion={{...location, latitudeDelta:0.2, longitudeDelta:0.2}}
+                    showsMyLocationButton
+                    showsUserLocation
+                >
+                    <Marker coordinate={location} >
+                      <MarkerIcon width={wp(20)} height={hp(4)} />
+                    </Marker>
+                </MapView>
+        </View>
       )}
     </Container>
   );
 };
 
+// Finalizados List Item
+const FinishedItem = ({ item }) => {
+  const date = item.date
+  const formattedTime = item.time;
+  const navigation = useNavigation()
+  console.log('Item; ', item);
+
+  return (
+    <TouchableNativeFeedback
+      onPress={() =>
+        navigation.navigate("DetalleEnCamino", {
+          item: {
+            ...item,
+            // title: "N73",
+            // payType: "Efectivo",
+            // product: { name: "Gas 15Kg", price: 1.6, qty: 5 },
+          },
+        })
+      }
+    >
+      <View style={[{ marginVertical: 0, width:wp(100), flex:1, marginHorizontal:wp(5)}]}>
+        <View
+          style={[
+            styles.row,
+            { justifyContent: "space-between", marginVertical: 5 },
+          ]}
+        >
+          <View style={{flex:5}} >
+            <Text style={styles.user}>{item.userName}</Text>
+            <View style={[styles.row, { justifyContent: "space-between" }]}>
+              <Text style={[styles.label]}>{`${date}`}</Text>
+              <Text style={[styles.label]}>{formattedTime}</Text>
+            </View>
+          </View>
+          <View
+            style={{
+              // alignItems: "center",
+              justifyContent: "flex-end",
+              flex:2,
+              marginLeft:wp(3.3),
+            }}
+          >
+            <Text style={styles.label}>ID {item.id}</Text>
+          </View>
+
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              flex:1
+            }}
+          >
+            <ChevronRightIcon height={15} width={15} />
+          </View>
+        </View>
+        <View
+          style={[
+            {
+              width: "40%",
+              flexDirection: "row",
+            },
+          ]}
+        >
+          <View>
+            <StarIcon width={15} height={15} />
+          </View>
+          <View style={[{ marginLeft: 5 }]}>
+            <StarIcon width={15} height={15} />
+          </View>
+          <View style={[{ marginLeft: 5 }]}>
+            <StarIcon width={15} height={15} />
+          </View>
+          <View style={[{ marginLeft: 5 }]}>
+            <StarIcon width={15} height={15} />
+          </View>
+          <View style={[{ marginLeft: 5 }]}>
+            <StarIcon width={15} height={15} />
+          </View>
+        </View>
+      </View>
+    </TouchableNativeFeedback>
+  );
+};
+
 // Solicitados List Item
 const RequestedListItem = ({ item, navigation }) => {
-  const date = item.date.split("T");
-  const formattedTime = date[1].substring(0, 8);
+  const date = item.date
+  const formattedTime = item.time;
+  // console.log('itm', item);
 
   return (
     <TouchableNativeFeedback
       onPress={() =>
         navigation.navigate("DetalleSolicitado", {
           item: {
-            ...item,
+            ...item,/* 
             title: "N73",
             payType: "Efectivo",
-            product: { name: "Gas 15Kg", price: 1.6, qty: 5 },
+            product: { name: "Gas 15Kg", price: 1.6, qty: 5 }, */
           },
         })
       }
@@ -243,7 +391,7 @@ const RequestedListItem = ({ item, navigation }) => {
         <View style={{ width: "50%" }}>
           <Text style={styles.user}>N73</Text>
           <View style={[styles.row, { justifyContent: "space-between" }]}>
-            <Text style={[styles.label]}>{`${date[0]}`}</Text>
+            <Text style={[styles.label]}>{`${date}`}</Text>
             <Text style={[styles.label]}>{formattedTime}</Text>
           </View>
         </View>
@@ -257,8 +405,10 @@ const RequestedListItem = ({ item, navigation }) => {
 
 // En Camino List Item
 const EnCaminoItem = ({ item, navigation }) => {
-  const date = item.date.split("T");
-  const formattedTime = date[1].substring(0, 8);
+  // const date = item.date.split("T");
+  // const formattedTime = date[1].substring(0, 8);
+  const date = item.date
+  const formattedTime = item.time;
 
   return (
     <TouchableNativeFeedback
@@ -281,9 +431,9 @@ const EnCaminoItem = ({ item, navigation }) => {
           ]}
         >
           <View>
-            <Text style={styles.user}>{item.user}</Text>
+            <Text style={styles.user}>{item.userName}</Text>
             <View style={[styles.row, { justifyContent: "space-between" }]}>
-              <Text style={[styles.label]}>{`${date[0]}`}</Text>
+              <Text style={[styles.label]}>{`${date}`}</Text>
               <Text style={[styles.label]}>{formattedTime}</Text>
             </View>
           </View>
@@ -335,85 +485,9 @@ const EnCaminoItem = ({ item, navigation }) => {
     </TouchableNativeFeedback>
   );
 };
-// Finalizados List Item
 
-const FinishedItem = ({ item }) => {
-  const date = item.date.split("T");
-  const formattedTime = date[1].substring(0, 8);
 
-  return (
-    <TouchableNativeFeedback
-      onPress={() =>
-        navigation.navigate("DetalleEnCamino", {
-          item: {
-            ...item,
-            title: "N73",
-            payType: "Efectivo",
-            product: { name: "Gas 15Kg", price: 1.6, qty: 5 },
-          },
-        })
-      }
-    >
-      <View style={[{ marginVertical: 10 }]}>
-        <View
-          style={[
-            styles.row,
-            { justifyContent: "space-between", marginVertical: 5 },
-          ]}
-        >
-          <View>
-            <Text style={styles.user}>{item.user}</Text>
-            <View style={[styles.row, { justifyContent: "space-between" }]}>
-              <Text style={[styles.label]}>{`${date[0]}`}</Text>
-              <Text style={[styles.label]}>{formattedTime}</Text>
-            </View>
-          </View>
-          <View
-            style={{
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Text style={styles.label}>ID {item.id}</Text>
-          </View>
 
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-            }}
-          >
-            <ChevronRightIcon height={15} width={15} />
-          </View>
-        </View>
-        <View
-          style={[
-            {
-              width: "40%",
-              flexDirection: "row",
-            },
-          ]}
-        >
-          <View>
-            <StarIcon width={15} height={15} />
-          </View>
-          <View style={[{ marginLeft: 5 }]}>
-            <StarIcon width={15} height={15} />
-          </View>
-          <View style={[{ marginLeft: 5 }]}>
-            <StarIcon width={15} height={15} />
-          </View>
-          <View style={[{ marginLeft: 5 }]}>
-            <StarIcon width={15} height={15} />
-          </View>
-          <View style={[{ marginLeft: 5 }]}>
-            <StarIcon width={15} height={15} />
-          </View>
-        </View>
-      </View>
-    </TouchableNativeFeedback>
-  );
-};
 
 const HeaderTabButton = (props) => {
   return (
@@ -436,7 +510,7 @@ const HeaderTabButton = (props) => {
 const styles = StyleSheet.create({
   screen: {
     backgroundColor: "#fff",
-    alignItems: "center",
+    // alignItems: "center",
   },
   row: {
     flexDirection: "row",

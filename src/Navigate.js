@@ -54,14 +54,14 @@ const Navegador = (props) => {
         screenOptions={{
           headerShown: false,
         }}
-        initialRouteName="NotificacionesEjemplo"
+        initialRouteName="Inicio"
       >
+
+        <Stack.Screen name="Inicio" component={Inicio} />
         <Stack.Screen
           name="NotificacionesEjemplo"
           component={NotificacionesEjemplo}
         />
-
-        <Stack.Screen name="Inicio" component={Inicio} />
 
         {/* Mi Cuenta */}
         <Stack.Screen
