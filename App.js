@@ -12,6 +12,7 @@ import { persistStore } from "redux-persist"; //NO BORRAR
 import { store, persistor } from "./src/redux/store";
 import Cargando from "./src/generales/Cargando";
 import Navigate from "./src/Navigate";
+import { colores } from "./src/constantes/Temas";
 
 export default function App() {
   const [load, setload] = useState(true);
@@ -44,6 +45,7 @@ export default function App() {
       <Provider store={store}>
         <PersistGate persistor={persistor} loading={renderLoading()}>
           <Navigate />
+          <StatusBar style='light' backgroundColor={colores.bgOscuro} />
         </PersistGate>
       </Provider>
     )
