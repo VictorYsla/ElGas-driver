@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, Image, TouchableOpacity } from "react-native";
+import { View, Text, Image, TouchableOpacity, StatusBar } from "react-native";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { colores } from "../../constantes/Temas";
 import {
@@ -38,6 +38,7 @@ const BasicHeader = ({
   return (
     <View
       style={{
+        marginTop: StatusBar.currentHeight,
         height: `${headerHeigth}%`,
         flexDirection: "row",
         width: "100%",

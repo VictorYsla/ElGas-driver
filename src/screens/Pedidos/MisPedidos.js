@@ -16,23 +16,35 @@ import MoneyMarkerIcon from "../../components/Icons/MoneyMarker";
 import StarIcon from "../../components/Icons/StarIcon";
 import Container from "../../generales/Container";
 import { actions } from "../../redux";
-import {getCurrentDeliverys} from '../../apis/querys'
-import MapView, {Marker} from 'react-native-maps';
-import * as Location from 'expo-location';
+import { getCurrentDeliverys } from "../../apis/querys";
+import MapView, { Marker } from "react-native-maps";
+import * as Location from "expo-location";
 import MarkerIcon from "../../components/Icons/Marker";
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
-import {useNavigation} from '@react-navigation/native'
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
+import { useNavigation } from "@react-navigation/native";
+
+import * as Notifications from "expo-notifications";
+import {
+  registerForPushNotificationsAsync,
+  sendPushNotification,
+} from "../../functions/Notificaciones";
 
 const MisPedidos = (props) => {
   const [requested, setRequested] = useState(true);
   const [onTheWay, setOnTheWay] = useState(false);
   const [finished, setFinished] = useState(false);
-  const [currentDeliverys, setCurrentDeliverys] = useState([])
+  const [currentDeliverys, setCurrentDeliverys] = useState([]);
   const [location, setLocation] = useState({
-    latitude: 74.000,
-    longitude: -4.000
-})
+    latitude: 74.0,
+    longitude: -4.0,
+  });
   const dispatch = useDispatch();
+
+  // Notificaciones
+  const [notification, setNotification] = useState(false);
 
   useEffect(() => {
     const actualizarNavegacion = (ruta) =>
@@ -40,47 +52,49 @@ const MisPedidos = (props) => {
     actualizarNavegacion(props.route.name);
   }, []);
 
-  useEffect(()=>{
-    GetCurrentLocation()
-  },[])
-  async function GetCurrentLocation (){
-      let { status } = await Location.requestPermissionsAsync();
-      if (status !== 'granted') {
-          setErrorMsg('Permission to access location was denied');
-      }
-      let location = await Location.getCurrentPositionAsync({});
-      //console.log(location)
-      setLocation({
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude
-      });
+  useEffect(() => {
+    GetCurrentLocation();
+  }, []);
+  async function GetCurrentLocation() {
+    let { status } = await Location.requestPermissionsAsync();
+    if (status !== "granted") {
+      setErrorMsg("Permission to access location was denied");
+    }
+    let location = await Location.getCurrentPositionAsync({});
+    //console.log(location)
+    setLocation({
+      latitude: location.coords.latitude,
+      longitude: location.coords.longitude,
+    });
   }
 
-  
-  useEffect(()=>{
+  useEffect(() => {
     // const type = requested?'Solicitado':onTheWay?'En camino': 'Terminado'
-    const type = 'Solicitado'
+    const type = "Solicitado";
     // console.log('InuseEfect', type);
-    getCurrentDeliverys('333333333333', type)
-    .then(response =>{
-      
-      const array = []
-      response.forEach((value)=>{
+    getCurrentDeliverys("333333333333", type).then((response) => {
+      console.log("response", response);
+
+      const array = [];
+      response.forEach((value) => {
         const obj = {
-          date: `${new Date(value.fecha).getFullYear()}-${new Date(value.fecha).getMonth()+1}-${new Date(value.fecha).getDate()}`,
-          time : `34:35:21`,
+          date: `${new Date(value.fecha).getFullYear()}-${
+            new Date(value.fecha).getMonth() + 1
+          }-${new Date(value.fecha).getDate()}`,
+          time: `23:35:21`,
           title: value.direccion.nombre,
           userName: value.nombre_cliente,
           payType: value.forma_pago,
           products: value.productos,
-          id: value.id
-        }
-        array.push(obj)
-      })
-      setCurrentDeliverys(array)
-      console.log('Respo: ', array);
-    })
-  }, [requested, onTheWay, finished])
+          id: value.id,
+          pushToken: value.pushToken,
+        };
+        array.push(obj);
+      });
+      setCurrentDeliverys(array);
+      console.log("Respo: ", array);
+    });
+  }, [requested, onTheWay, finished]);
 
   const dummy_data = [
     {
@@ -129,7 +143,7 @@ const MisPedidos = (props) => {
     <Container styleContainer={styles.screen} navigation={props.navigation}>
       <BasicHeader
         icon={<ChevronLeftIcon height={15} width={15} />}
-        title="Mis Pedidos"
+        title='Mis Pedidos'
       />
       <View
         style={{
@@ -211,7 +225,7 @@ const MisPedidos = (props) => {
           }}
         >
           <FlatList
-            data={currentDeliverys}//dummy_data
+            data={currentDeliverys} //dummy_data
             renderItem={({ item }) => (
               <RequestedListItem item={item} navigation={props.navigation} />
             )}
@@ -258,18 +272,27 @@ const MisPedidos = (props) => {
       {onTheWay && (
         <View
           style={[
-            { flex: 1, /* backgroundColor: "red", */ height: "100%", width: "100%" },
+            {
+              flex: 1,
+              /* backgroundColor: "red", */ height: "100%",
+              width: "100%",
+            },
           ]}
         >
-          <MapView style={{flex:1}}
-                    initialRegion={{...location, latitudeDelta:0.2, longitudeDelta:0.2}}
-                    showsMyLocationButton
-                    showsUserLocation
-                >
-                    <Marker coordinate={location} >
-                      <MarkerIcon width={wp(20)} height={hp(4)} />
-                    </Marker>
-                </MapView>
+          <MapView
+            style={{ flex: 1 }}
+            initialRegion={{
+              ...location,
+              latitudeDelta: 0.2,
+              longitudeDelta: 0.2,
+            }}
+            showsMyLocationButton
+            showsUserLocation
+          >
+            <Marker coordinate={location}>
+              <MarkerIcon width={wp(20)} height={hp(4)} />
+            </Marker>
+          </MapView>
         </View>
       )}
     </Container>
@@ -278,10 +301,10 @@ const MisPedidos = (props) => {
 
 // Finalizados List Item
 const FinishedItem = ({ item }) => {
-  const date = item.date
+  const date = item.date;
   const formattedTime = item.time;
-  const navigation = useNavigation()
-  console.log('Item; ', item);
+  const navigation = useNavigation();
+  console.log("Item; ", item);
 
   return (
     <TouchableNativeFeedback
@@ -296,14 +319,23 @@ const FinishedItem = ({ item }) => {
         })
       }
     >
-      <View style={[{ marginVertical: 0, width:wp(100), flex:1, marginHorizontal:wp(5)}]}>
+      <View
+        style={[
+          {
+            marginVertical: 0,
+            width: wp(100),
+            flex: 1,
+            marginHorizontal: wp(5),
+          },
+        ]}
+      >
         <View
           style={[
             styles.row,
             { justifyContent: "space-between", marginVertical: 5 },
           ]}
         >
-          <View style={{flex:5}} >
+          <View style={{ flex: 5 }}>
             <Text style={styles.user}>{item.userName}</Text>
             <View style={[styles.row, { justifyContent: "space-between" }]}>
               <Text style={[styles.label]}>{`${date}`}</Text>
@@ -314,8 +346,8 @@ const FinishedItem = ({ item }) => {
             style={{
               // alignItems: "center",
               justifyContent: "flex-end",
-              flex:2,
-              marginLeft:wp(3.3),
+              flex: 2,
+              marginLeft: wp(3.3),
             }}
           >
             <Text style={styles.label}>ID {item.id}</Text>
@@ -325,7 +357,7 @@ const FinishedItem = ({ item }) => {
             style={{
               flexDirection: "row",
               alignItems: "center",
-              flex:1
+              flex: 1,
             }}
           >
             <ChevronRightIcon height={15} width={15} />
@@ -362,7 +394,7 @@ const FinishedItem = ({ item }) => {
 
 // Solicitados List Item
 const RequestedListItem = ({ item, navigation }) => {
-  const date = item.date
+  const date = item.date;
   const formattedTime = item.time;
   // console.log('itm', item);
 
@@ -371,10 +403,10 @@ const RequestedListItem = ({ item, navigation }) => {
       onPress={() =>
         navigation.navigate("DetalleSolicitado", {
           item: {
-            ...item,/* 
+            ...item /* 
             title: "N73",
             payType: "Efectivo",
-            product: { name: "Gas 15Kg", price: 1.6, qty: 5 }, */
+            product: { name: "Gas 15Kg", price: 1.6, qty: 5 }, */,
           },
         })
       }
@@ -407,7 +439,7 @@ const RequestedListItem = ({ item, navigation }) => {
 const EnCaminoItem = ({ item, navigation }) => {
   // const date = item.date.split("T");
   // const formattedTime = date[1].substring(0, 8);
-  const date = item.date
+  const date = item.date;
   const formattedTime = item.time;
 
   return (
@@ -485,9 +517,6 @@ const EnCaminoItem = ({ item, navigation }) => {
     </TouchableNativeFeedback>
   );
 };
-
-
-
 
 const HeaderTabButton = (props) => {
   return (
