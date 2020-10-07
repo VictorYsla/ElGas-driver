@@ -10,7 +10,7 @@ export async function sendPushNotification(
   data = { datos: "datitos" }
 ) {
   const message = {
-    to: [expoPushToken, expoPushToken], //arreglo de tokens de hasta 100 máximo
+    to: [expoPushToken /* expoPushToken */], //arreglo de tokens de hasta 100 máximo
     sound: "default",
     title: title,
     body: body,
