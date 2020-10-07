@@ -6,13 +6,14 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import {useNavigation} from '@react-navigation/native'
 
 const InitalLeftComponent = (icon, iconWidth, iconHeight) => {
-  //const navigation = useNavigation()
+  const navigation = useNavigation()
   return (
     <TouchableOpacity
       onPress={() => {
-        /* navigation.goBack() */
+        navigation.goBack()
       }}
       style={{ flex: 1, justifyContent: "center", marginLeft: "20%" }}
     >

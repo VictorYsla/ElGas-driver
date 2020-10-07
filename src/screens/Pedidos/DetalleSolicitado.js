@@ -18,14 +18,24 @@ import BasicHeader from "../../components/Header/BasicHeader";
 import ChevronLeftIcon from "../../components/Icons/ChevronLeftIcon";
 import ChevronRightIcon from "../../components/Icons/ChevronRightIcon";
 import { sendPushNotification } from "../../functions/Notificaciones";
+import { useSelector } from "react-redux";
+import {updateAceptedDelivery} from '../../apis/querys'
 
 import Container from "../../generales/Container";
 
 const DetalleSolicitado = (props) => {
   const fetchedItemData = props.route.params?.item;
-  console.log("Recibido: ", fetchedItemData);
+  const user = useSelector((state) => state.login.login);
+  console.log("Recibido: ", fetchedItemData, user);
   const date = fetchedItemData.date;
   const formattedTime = fetchedItemData.time;
+  const onConfirm = async() => {
+    // await sendPushNotification(fetchedItemData.pushToken);
+    const {id_doc} = fetchedItemData
+    // console.log('fetchediwedir:  ', id_doc);
+    updateAceptedDelivery(user, id_doc)
+
+  }
 
   return (
     <Container styleContainer={styles.screen} navigation={props.navigation}>
@@ -132,34 +142,6 @@ const DetalleSolicitado = (props) => {
                     quantity={value.quantity}
                     uri={value.image_url}
                   />
-                  <DeliveryItems
-                    index={index}
-                    name={value.name}
-                    price={value.price}
-                    quantity={value.quantity}
-                    uri={value.image_url}
-                  />
-                  <DeliveryItems
-                    index={index}
-                    name={value.name}
-                    price={value.price}
-                    quantity={value.quantity}
-                    uri={value.image_url}
-                  />
-                  <DeliveryItems
-                    index={index}
-                    name={value.name}
-                    price={value.price}
-                    quantity={value.quantity}
-                    uri={value.image_url}
-                  />
-                  <DeliveryItems
-                    index={index}
-                    name={value.name}
-                    price={value.price}
-                    quantity={value.quantity}
-                    uri={value.image_url}
-                  />
                 </>
               );
             })}
@@ -203,8 +185,8 @@ const DetalleSolicitado = (props) => {
               ]}
             >
               <CustomButton
-                onPress={async () => {
-                  await sendPushNotification(fetchedItemData.pushToken);
+                onPress={() => {
+                  onConfirm();
                 }}
               >
                 <Text style={[styles.title]}>ACEPTAR</Text>
@@ -224,7 +206,6 @@ const DeliveryItems = ({
   index,
   uri,
 }) => {
-  console.log("Props", uri);
   return (
     <View
       style={[
