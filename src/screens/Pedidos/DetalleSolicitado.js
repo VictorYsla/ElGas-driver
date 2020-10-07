@@ -204,7 +204,11 @@ const DetalleSolicitado = (props) => {
             >
               <CustomButton
                 onPress={async () => {
-                  await sendPushNotification(fetchedItemData.pushToken);
+                  await sendPushNotification(
+                    fetchedItemData.pushToken,
+                    "¡Su envío está en camino!",
+                    "El repartidor le notificará cuando se encuentre fuera de su casa"
+                  );
                 }}
               >
                 <Text style={[styles.title]}>ACEPTAR</Text>
