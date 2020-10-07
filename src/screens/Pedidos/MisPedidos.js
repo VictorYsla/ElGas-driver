@@ -74,7 +74,6 @@ const MisPedidos = (props) => {
     // console.log('InuseEfect', type);
     getCurrentDeliverys("333333333333", type).then((response) => {
       console.log("response", response);
-
       const array = [];
       response.forEach((value) => {
         const obj = {
@@ -88,6 +87,7 @@ const MisPedidos = (props) => {
           products: value.productos,
           id: value.id,
           pushToken: value.pushToken,
+          ...value
         };
         array.push(obj);
       });
