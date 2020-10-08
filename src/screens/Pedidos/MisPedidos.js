@@ -43,9 +43,6 @@ const MisPedidos = (props) => {
   });
   const dispatch = useDispatch();
 
-  // Notificaciones
-  const [notification, setNotification] = useState(false);
-
   useEffect(() => {
     const actualizarNavegacion = (ruta) =>
       dispatch(actions.actualizarUbicacion(ruta));
@@ -87,7 +84,7 @@ const MisPedidos = (props) => {
           products: value.productos,
           id: value.id,
           pushToken: value.pushToken,
-          ...value
+          ...value,
         };
         array.push(obj);
       });

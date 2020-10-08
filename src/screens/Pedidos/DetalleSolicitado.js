@@ -19,7 +19,7 @@ import ChevronLeftIcon from "../../components/Icons/ChevronLeftIcon";
 import ChevronRightIcon from "../../components/Icons/ChevronRightIcon";
 import { sendPushNotification } from "../../functions/Notificaciones";
 import { useSelector } from "react-redux";
-import {updateAceptedDelivery} from '../../apis/querys'
+import { updateAceptedDelivery } from "../../apis/querys";
 
 import Container from "../../generales/Container";
 
@@ -29,13 +29,16 @@ const DetalleSolicitado = (props) => {
   console.log("Recibido: ", fetchedItemData, user);
   const date = fetchedItemData.date;
   const formattedTime = fetchedItemData.time;
-  const onConfirm = async() => {
-    // await sendPushNotification(fetchedItemData.pushToken);
-    const {id_doc} = fetchedItemData
+  const onConfirm = async () => {
+    await sendPushNotification(
+      fetchedItemData.pushToken,
+      "¡Su pedido está en camino!",
+      "El repartidor le notificará cuando se encuentre fuera de su domicilio"
+    );
+    const { id_doc } = fetchedItemData;
     // console.log('fetchediwedir:  ', id_doc);
-    updateAceptedDelivery(user, id_doc)
-
-  }
+    updateAceptedDelivery(user, id_doc, "En Camino");
+  };
 
   return (
     <Container styleContainer={styles.screen} navigation={props.navigation}>
