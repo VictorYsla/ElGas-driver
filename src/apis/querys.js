@@ -79,33 +79,36 @@ export const logIn = async (email = "", password = "") => {
     });
 };
 
-export const getCurrentDeliverys = async (uid = "333333333333", type='Solicitado') => {
+export const getCurrentDeliverys = async (
+  uid = "333333333333",
+  type = "Solicitado"
+) => {
   const collection = "plant_pedidos_en_camino";
-  if(type==='Solicitado'){
-    console.log('InSolocitado');
+  if (type === "Solicitado") {
+    console.log("InSolocitado");
     return await firebase
-    .firestore()
-    .collection(collection)
-    .where('estado', '==', `${type}`)
-    .get()
-    .then((x) => {
-      const values = [];
-      x.docs.forEach((doc) => {
-        values.push({...doc.data(), id_doc: doc.id});
+      .firestore()
+      .collection(collection)
+      .where("estado", "==", `${type}`)
+      .get()
+      .then((x) => {
+        const values = [];
+        x.docs.forEach((doc) => {
+          values.push({ ...doc.data(), id_doc: doc.id });
+        });
+        return values;
       });
-      return values;
-    });
   }
   return await firebase
     .firestore()
     .collection(collection)
     .where("id_driver", "==", `${uid}`)
-    .where('estado', '==', `${type}`)
+    .where("estado", "==", `${type}`)
     .get()
     .then((x) => {
       const values = [];
       x.docs.forEach((doc) => {
-        values.push({...doc.data(), id_doc: doc.id});
+        values.push({ ...doc.data(), id_doc: doc.id });
       });
       return values;
     });
@@ -120,23 +123,19 @@ export const getDeliverys = async () => {
     .then((x) => {
       const values = [];
       x.docs.forEach((doc) => {
-        values.push({...doc.data(), id_doc: doc.id});
+        values.push({ ...doc.data(), id_doc: doc.id });
       });
       return values;
     });
 };
 
-export const updateAceptedDelivery = (user, docId) =>{
+export const updateAceptedDelivery = (user, docId, status) => {
   const collection = "plant_pedidos_en_camino";
-  const {uid, userName} = user
+  const { uid, userName } = user;
   // console.log(uid, userName, docId);
-  firebase
-  .firestore()
-  .collection(collection)
-  .doc(docId)
-  .update({
-    estado: 'En camino',
+  firebase.firestore().collection(collection).doc(docId).update({
+    estado: status,
     id_driver: uid,
-    nombre_driver: userName
-  })
-}
+    nombre_driver: userName,
+  });
+};
