@@ -1,7 +1,7 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, ScrollView, TextInput } from "react-native";
 import { RFPercentage } from "react-native-responsive-fontsize";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../../components/CustomButton";
 import CustomSelector from "../../components/Form/Selector";
 import BasicHeader from "../../components/Header/BasicHeader";
@@ -18,12 +18,16 @@ import Container from "../../generales/Container";
 import useForm from "../../hooks/useForm";
 import { actions } from "../../redux";
 import {
+  getCollection,
   getCurrentDeliverys,
   getDeliverys,
   postCollection,
-
+  updateCollection,
 } from "../../apis/querys";
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import navigation from "../../redux/reducers/navigation";
 
@@ -37,42 +41,46 @@ const initialValues = {
   nigth_delivery: "",
 };
 
-const dataPushFirebase ={
-  id_pedido:'3uhe3u',
-  nombre_cliente: 'Roberto Salazar',
-  id_cliente: 'wjiefii23',
-  estrellas:4,
-  forma_pago:'Efectivo',
+const dataPushFirebase = {
+  id_pedido: "3uhe3u",
+  nombre_cliente: "Roberto Salazar",
+  id_cliente: "wjiefii23",
+  estrellas: 4,
+  forma_pago: "Efectivo",
   fecha: +new Date(),
-  cliente_token:'7w833yerewr',
-  direccion:{
+  cliente_token: "7w833yerewr",
+  direccion: {
     latitud: -73.3434,
     longitud: -0.63723,
-    nombre:'Casa 1',
-    informacion_adicional:{
+    nombre: "Casa 1",
+    informacion_adicional: {
       apartamento: 3,
-      numero: 245
-    }
+      numero: 245,
+    },
   },
-  productos:[
+  productos: [
     {
-      description: 'Válvula de gran capacidad.',
+      description: "Válvula de gran capacidad.",
       capacity: 45,
-      unity:'kg',
-      id:'6734ry3',
-      name:'Válvula',
-      price:1.6,
-      quantity:4
-    }
-  ]
-}
+      unity: "kg",
+      id: "6734ry3",
+      name: "Válvula",
+      price: 1.6,
+      quantity: 4,
+    },
+  ],
+};
 
 const MiCuenta = (props) => {
   const { screenHeight } = pantalla;
+  const user = useSelector((state) => state.login.login);
+  const [repartidor, setRepartidor] = useState([]);
+  // const [enviar, setEnviar] = useState(false);
 
   const form = useForm({ initialValues });
 
-  console.log(form.fields);
+  // console.log(form.fields);
+  console.log("user:", user);
 
   const dispatch = useDispatch();
 
@@ -84,14 +92,30 @@ const MiCuenta = (props) => {
     //   console.log("Resposne2: ", response);
     // });
     // postCollection('plant_pedidos_en_camino', dataPushFirebase)
+    // const getRepartidor = async () => {
+    //   await getCollection("usuarios").then((response) => {
+    //     setRepartidor(response.filter((i) => i.id_driver === user.uid));
+    //     dispatch(
+    //       actions.actualizarLogin({ ...user, information: repartidor[0] })
+    //     );
+    //   });
+    // };
+    // getRepartidor();
+
+    getCollection("usuarios").then((response) => {
+      setRepartidor(response.filter((i) => i.id_driver === user.uid));
+      dispatch(actions.actualizarLogin({ ...user, information: response[0] }));
+    });
+
     const actualizarRuta = (ruta) =>
       dispatch(actions.actualizarUbicacion(ruta));
     actualizarRuta(props.route.name);
-
   }, []);
   // console.log('Form: ', form.fields);
 
-  const onSubmit = () => {
+  const id = repartidor.length > 0 ? repartidor[0].id_info : "vacio";
+
+  const onSubmit = async () => {
     const payload = {
       // id de usuario
       name: form.fields["name"],
@@ -101,10 +125,23 @@ const MiCuenta = (props) => {
       email: form.fields["email"],
       day_delivery: form.fields["day_delivery"],
       nigth_delivery: form.fields["nigth_delivery"],
+      id_driver: user.uid,
     };
 
-    // console.log(payload);
-    postCollection("usuarios", payload);
+    if (repartidor.length === 0 && payload.email.length !== 0) {
+      postCollection("usuarios", payload).then((r) => {
+        r ? alert("Datos guardados con éxito") : alert("Ups, sucedió un error");
+      });
+    }
+    if (repartidor.length > 0 && payload.email.length !== 0) {
+      updateCollection("usuarios", id, payload).then((r) => {
+        r
+          ? alert("Cambios realizados con éxito")
+          : alert("Ups, sucedió un error");
+      });
+    }
+    payload.email.length === 0 &&
+      alert("Complete correctamente todos los datos");
   };
 
   return (
@@ -126,8 +163,9 @@ const MiCuenta = (props) => {
             width: "100%",
             flex: 1,
             alignItems: "center",
-            justifyContent: screenHeight <= 592 ? "flex-start" : "center",
+            justifyContent: screenHeight <= 592 ? "flex-start" : "space-around",
             height: "100%",
+            // marginBottom=hp(10),
             minHeight: screenHeight <= 592 ? 450 : 600,
           },
         ]}
@@ -137,7 +175,7 @@ const MiCuenta = (props) => {
             {
               fontWeight: "bold",
               fontSize: RFPercentage(2.2),
-              marginVertical: 10,
+              // marginVertical: 10,
             },
           ]}
         >
@@ -145,15 +183,20 @@ const MiCuenta = (props) => {
         </Text>
 
         {/* Form Wrapper */}
-        <View style={[{ height: "70%", width: "80%" }]}>
-          <ScrollView>
+        <View style={[{ height: hp(80), width: "90%" }]}>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            style={{ marginLeft: hp(5) }}
+          >
             <View
               style={[
                 {
                   flexDirection: "row",
                   alignItems: "center",
                   width: "80%",
-                  marginVertical: 15,
+                  // marginVertical: 15,
+                  marginTop: hp(1),
+                  // marginBottom: hp(1),
                 },
               ]}
             >
@@ -187,6 +230,7 @@ const MiCuenta = (props) => {
                     },
                   ]}
                   {...form.getInput("name")}
+                  defaultValue={user.information ? user.information.name : ""}
                 />
               </View>
             </View>
@@ -231,6 +275,9 @@ const MiCuenta = (props) => {
                     form={form}
                     radiusHeight={15}
                     radiusWidth={15}
+                    dni={
+                      user.information ? user.information.dniType : undefined
+                    }
                   />
                 </View>
               </View>
@@ -259,6 +306,7 @@ const MiCuenta = (props) => {
                   Número de identificación
                 </Text>
                 <TextInput
+                  keyboardType={"numeric"}
                   style={[
                     {
                       width: 200,
@@ -270,6 +318,9 @@ const MiCuenta = (props) => {
                     },
                   ]}
                   {...form.getInput("dni")}
+                  defaultValue={
+                    user.information ? user.information.dni : undefined
+                  }
                 />
               </View>
             </View>
@@ -302,6 +353,7 @@ const MiCuenta = (props) => {
                   Número de celular
                 </Text>
                 <TextInput
+                  keyboardType={"numeric"}
                   style={[
                     {
                       width: 200,
@@ -313,6 +365,9 @@ const MiCuenta = (props) => {
                     },
                   ]}
                   {...form.getInput("phone")}
+                  defaultValue={
+                    user.information ? user.information.phone : undefined
+                  }
                 />
               </View>
             </View>
@@ -349,6 +404,7 @@ const MiCuenta = (props) => {
                   E-Mail
                 </Text>
                 <TextInput
+                  keyboardType={"email-address"}
                   style={[
                     {
                       width: 200,
@@ -360,6 +416,9 @@ const MiCuenta = (props) => {
                     },
                   ]}
                   {...form.getInput("email")}
+                  defaultValue={
+                    user.information ? user.information.email : undefined
+                  }
                 />
               </View>
             </View>
@@ -403,6 +462,9 @@ const MiCuenta = (props) => {
                     },
                   ]}
                   {...form.getInput("day_delivery")}
+                  defaultValue={
+                    user.information ? user.information.day_delivery : undefined
+                  }
                 />
               </View>
             </View>
@@ -430,7 +492,12 @@ const MiCuenta = (props) => {
               </View>
               <View>
                 <Text
-                  style={[{ fontWeight: "bold", fontSize: RFPercentage(2.2) }]}
+                  style={[
+                    {
+                      fontWeight: "bold",
+                      fontSize: RFPercentage(2.2),
+                    },
+                  ]}
                 >
                   Costo domicilio noche
                 </Text>
@@ -446,33 +513,39 @@ const MiCuenta = (props) => {
                     },
                   ]}
                   {...form.getInput("nigth_delivery")}
+                  defaultValue={
+                    user.information
+                      ? user.information.nigth_delivery
+                      : undefined
+                  }
                 />
               </View>
             </View>
           </ScrollView>
-        </View>
-
-        <View style={{flexDirection:'column', marginTop:hp(2), }} >
           <View
             style={[
               {
-                width: wp(44),
+                alignItems: "center",
+                width: "100%",
                 height: hp(3),
-                marginHorizontal:wp(2),
-                justifyContent:'center',
-                marginBottom:hp(1)
+                marginHorizontal: wp(2),
+                justifyContent: "center",
+                // marginLeft: hp(10),
+                marginBottom: hp(1),
               },
             ]}
           >
-            <TouchableOpacity onPress={()=>props.navigation.navigate('CambiarContrasena')} >
+            <TouchableOpacity
+              onPress={() => props.navigation.navigate("CambiarContrasena")}
+            >
               <Text
                 style={{
                   fontWeight: "bold",
                   textTransform: "uppercase",
                   fontSize: RFPercentage(2),
-                  textAlign:'center',
-                  color:colores.amarillo,
-                  textAlignVertical:'center'
+                  textAlign: "center",
+                  color: colores.amarillo,
+                  textAlignVertical: "center",
                 }}
               >
                 Cambiar Contraseña
@@ -482,13 +555,17 @@ const MiCuenta = (props) => {
           <View
             style={[
               {
-                width: wp(44),
+                // borderWidth: 1,
+                alignItems: "center",
+                width: "100%",
                 height: hp(8),
-                marginHorizontal:wp(2)
+                // marginHorizontal: wp(2),
+                // marginLeft: hp(15),
+                marginBottom: hp(17),
               },
             ]}
           >
-            <CustomButton onPress={onSubmit} >
+            <CustomButton onPress={onSubmit}>
               <Text
                 style={{
                   fontWeight: "bold",
@@ -502,6 +579,7 @@ const MiCuenta = (props) => {
           </View>
         </View>
 
+        {/* <View style={{ flexDirection: "column", marginTop: hp(2) }}></View> */}
       </View>
     </Container>
   );
@@ -510,6 +588,8 @@ const MiCuenta = (props) => {
 const styles = StyleSheet.create({
   screen: {
     alignItems: "center",
+    // justifyContent: "flex-start",
+    // flex: 1,
   },
 });
 export default MiCuenta;

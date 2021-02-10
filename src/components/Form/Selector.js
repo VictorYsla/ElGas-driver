@@ -12,8 +12,13 @@ const CustomSelector = ({
   form,
   radiusWidth,
   radiusHeight,
+  dni,
 }) => {
   const Item = ({ title }) => {
+    console.log("dni:", dni);
+    // console.log("form.fields.dniType:", form.fields.dniType.length);
+    const newDniType =
+      form.fields.dniType.length !== 0 ? form.fields.dniType : dni;
     return (
       <TouchableOpacity
         onPress={() => {
@@ -32,7 +37,7 @@ const CustomSelector = ({
             width: radiusWidth,
             height: radiusHeight,
             backgroundColor:
-              form.fields.dniType === title ? colores.bgOscuro : "transparent",
+              newDniType === title ? colores.bgOscuro : "transparent",
             borderRadius: radiusWidth / 2,
             alignSelf: "center",
             borderColor: "#000",

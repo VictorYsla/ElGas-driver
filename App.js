@@ -10,20 +10,26 @@ import { PersistGate } from "redux-persist/integration/react";
 import { persistStore } from "redux-persist"; //NO BORRAR
 import firebase from "firebase";
 
-
 import { store, persistor } from "./src/redux/store";
 import Cargando from "./src/generales/Cargando";
 import Navigate from "./src/Navigate";
 import { colores } from "./src/constantes/Temas";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBk5ZiEvknFcEYFohScW2l_UER61mXwOIs",
-  authDomain: "camp-ebd9b.firebaseapp.com",
-  databaseURL: "https://elgas-68c82.firebaseio.com",
-  projectId: "elgas-68c82",
-  storageBucket: "elgas-68c82.appspot.com",
-  messagingSenderId: "564053304656",
-  appId: "1:564053304656:android:6aeaf58d5780d7c9cb3855",
+  // apiKey: "AIzaSyBk5ZiEvknFcEYFohScW2l_UER61mXwOIs",
+  // authDomain: "camp-ebd9b.firebaseapp.com",
+  // databaseURL: "https://elgas-68c82.firebaseio.com",
+  // projectId: "elgas-68c82",
+  // storageBucket: "elgas-68c82.appspot.com",
+  // messagingSenderId: "564053304656",
+  // appId: "1:564053304656:android:6aeaf58d5780d7c9cb3855",
+
+  apiKey: "AIzaSyAjRTYs1Vvv-mlx0vDJOMInpc7prDGJdy8",
+  authDomain: "elgas-af2c1.firebaseapp.com",
+  projectId: "elgas-af2c1",
+  storageBucket: "elgas-af2c1.appspot.com",
+  messagingSenderId: "159071361770",
+  appId: "1:159071361770:web:89292113132b79729f9593",
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -59,7 +65,7 @@ export default function App() {
       <Provider store={store}>
         <PersistGate persistor={persistor} loading={renderLoading()}>
           <Navigate />
-          <StatusBar style='light' backgroundColor={colores.bgOscuro} />
+          <StatusBar style="light" backgroundColor={colores.bgOscuro} />
         </PersistGate>
       </Provider>
     )

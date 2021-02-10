@@ -1,5 +1,23 @@
 import firebase from "firebase";
 
+export const updateCollection = async (
+  collectionName = "1",
+  doc = "1",
+  body = { name: "" }
+) => {
+  return await firebase
+    .firestore()
+    .collection(collectionName)
+    .doc(doc)
+    .set(body)
+    .then(() => {
+      return true;
+    })
+    .catch(() => {
+      return false;
+    });
+};
+
 export const getCollection = async (collectionName = "1") => {
   return await firebase
     .firestore()
@@ -8,7 +26,7 @@ export const getCollection = async (collectionName = "1") => {
     .then((x) => {
       const values = [];
       x.docs.forEach((doc) => {
-        values.push(doc.data());
+        values.push({ ...doc.data(), id_info: doc.id });
       });
       return values;
     });
@@ -81,15 +99,15 @@ export const logIn = async (email = "", password = "") => {
 
 export const getCurrentDeliverys = async (
   uid = "333333333333",
-  type = "Solicitado"
+  type = status
 ) => {
   const collection = "plant_pedidos_en_camino";
-  if (type === "Solicitado") {
-    console.log("InSolocitado");
+  if (type !== "") {
+    // console.log("InSolocitado");
     return await firebase
       .firestore()
       .collection(collection)
-      .where("estado", "==", `${type}`)
+      .where("orderStatus", "==", `${type}`)
       .get()
       .then((x) => {
         const values = [];
@@ -103,7 +121,7 @@ export const getCurrentDeliverys = async (
     .firestore()
     .collection(collection)
     .where("id_driver", "==", `${uid}`)
-    .where("estado", "==", `${type}`)
+    .where("orderStatus", "==", `${type}`)
     .get()
     .then((x) => {
       const values = [];
@@ -133,9 +151,15 @@ export const updateAceptedDelivery = (user, docId, status) => {
   const collection = "plant_pedidos_en_camino";
   const { uid, userName } = user;
   // console.log(uid, userName, docId);
-  firebase.firestore().collection(collection).doc(docId).update({
-    estado: status,
-    id_driver: uid,
-    nombre_driver: userName,
-  });
+  try {
+    firebase.firestore().collection(collection).doc(docId).update({
+      orderStatus: status,
+      id_driver: uid,
+      nombre_driver: userName,
+    });
+    return true;
+  } catch (error) {
+    console.log("error:", error);
+    return false;
+  }
 };

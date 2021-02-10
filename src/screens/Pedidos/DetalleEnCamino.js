@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -14,7 +14,7 @@ import {
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
 import { useSelector } from "react-redux";
-import { updateAceptedDelivery } from "../../apis/querys";
+import { getCollectionBetween, updateAceptedDelivery } from "../../apis/querys";
 import CustomButton from "../../components/CustomButton";
 import BasicHeader from "../../components/Header/BasicHeader";
 import ChevronLeftIcon from "../../components/Icons/ChevronLeftIcon";
@@ -23,26 +23,43 @@ import { colores } from "../../constantes/Temas";
 import { sendPushNotification } from "../../functions/Notificaciones";
 
 import Container from "../../generales/Container";
+import navigation from "../../redux/reducers/navigation";
 
 const DetalleEnCamino = (props) => {
   const fetchedItemData = props.route.params?.item;
-  console.log("Recibido: ", fetchedItemData);
   const date = fetchedItemData.date;
   const formattedTime = fetchedItemData.time;
   const user = useSelector((state) => state.login.login);
 
+  // console.log("props.route.params ", props.route.params);
+  const status =
+    fetchedItemData.orderStatus === "Terminado" ? "end" : undefined;
+
+  // useEffect(() => {
+
+  // }, []);
+
   const onConfirm = async () => {
-    // await sendPushNotification(fetchedItemData.pushToken, 'El conductor se encuentra fuera de su hogar', 'Favor salir a recibir su pedido' );
     const { id_doc } = fetchedItemData;
+    if (status) {
+      props.navigation.push("MisPedidos");
+    } else {
+      try {
+        updateAceptedDelivery(user, id_doc, "Terminado");
+        props.navigation.push("MisPedidos");
+      } catch (error) {
+        alert("Ups, sucedió un error");
+      }
+    }
+    // await sendPushNotification(fetchedItemData.pushToken, 'El conductor se encuentra fuera de su hogar', 'Favor salir a recibir su pedido' );
     // console.log('fetchediwedir:  ', id_doc);
-    updateAceptedDelivery(user, id_doc, "Terminado");
   };
 
   return (
     <Container styleContainer={styles.screen} navigation={props.navigation}>
       <BasicHeader
         icon={<ChevronLeftIcon height={20} width={20} />}
-        title='En Camino'
+        title={status ? "Finalizados" : "En Camino"}
       />
 
       <ScrollView>
@@ -124,7 +141,7 @@ const DetalleEnCamino = (props) => {
             >
               <View>
                 <Text style={styles.title}>Datos de facturación</Text>
-                <Text style={[styles.label]}>Silvester Stalone</Text>
+                <Text style={[styles.label]}>{fetchedItemData.userName}</Text>
               </View>
               <ChevronRightIcon width={15} height={15} />
             </View>
@@ -154,12 +171,12 @@ const DetalleEnCamino = (props) => {
                   <>
                     <DeliveryItems
                       index={index}
-                      name={value.name}
-                      price={value.price}
+                      name={value.category.name}
+                      price={value.product.price}
                       quantity={value.quantity}
-                      uri={value.image_url}
+                      uri={value.product.photo_url}
                     />
-                    <DeliveryItems
+                    {/* <DeliveryItems
                       index={index}
                       name={value.name}
                       price={value.price}
@@ -186,7 +203,7 @@ const DetalleEnCamino = (props) => {
                       price={value.price}
                       quantity={value.quantity}
                       uri={value.image_url}
-                    />
+                    /> */}
                   </>
                 );
               })}
@@ -207,13 +224,16 @@ const DetalleEnCamino = (props) => {
             ]}
           >
             <Text style={[styles.label, { marginVertical: 1 }]}>
-              Subtotal: $1.60
+              Subtotal: ${fetchedItemData.total - 2}
             </Text>
             <Text style={[styles.label, { marginVertical: 1 }]}>
               A domicilio: $2.00
             </Text>
             <Text style={[styles.label, { marginVertical: 1 }]}>
-              TOTAL: <Text style={[styles.productLabel]}>$10.00</Text>
+              TOTAL:{" "}
+              <Text style={[styles.productLabel]}>
+                ${fetchedItemData.total}
+              </Text>
             </Text>
           </View>
 
@@ -228,26 +248,28 @@ const DetalleEnCamino = (props) => {
               },
             ]}
           >
-            <View
-              style={[
-                {
-                  width: wp(40),
-                  height: hp(5),
-                },
-              ]}
-            >
-              <CustomButton
-                onPress={() =>
-                  sendPushNotification(
-                    fetchedItemData.pushToken,
-                    "El conductor se encuentra fuera de su hogar",
-                    "Favor salir a recibir su pedido"
-                  )
-                }
+            {!status && (
+              <View
+                style={[
+                  {
+                    width: wp(40),
+                    height: hp(5),
+                  },
+                ]}
               >
-                <Text style={[styles.title]}>ESTOY AFUERA</Text>
-              </CustomButton>
-            </View>
+                <CustomButton
+                  onPress={() =>
+                    sendPushNotification(
+                      fetchedItemData.pushToken,
+                      "El conductor se encuentra fuera de su hogar",
+                      "Favor salir a recibir su pedido"
+                    )
+                  }
+                >
+                  <Text style={[styles.title]}>ESTOY AFUERA</Text>
+                </CustomButton>
+              </View>
+            )}
             <View
               style={[
                 {
@@ -257,7 +279,9 @@ const DetalleEnCamino = (props) => {
               ]}
             >
               <CustomButton onPress={onConfirm}>
-                <Text style={[styles.title]}>FINALIZAR</Text>
+                <Text style={[styles.title]}>
+                  {status ? "REGRESAR" : "FINALIZAR"}
+                </Text>
               </CustomButton>
             </View>
           </View>
@@ -274,7 +298,7 @@ const DeliveryItems = ({
   index,
   uri,
 }) => {
-  console.log("Props", uri);
+  // console.log("Props", uri);
   return (
     <View
       style={[

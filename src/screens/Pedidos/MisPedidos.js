@@ -33,6 +33,7 @@ import {
 } from "../../functions/Notificaciones";
 
 const MisPedidos = (props) => {
+  const [status, setStatus] = useState("Solicitado");
   const [requested, setRequested] = useState(true);
   const [onTheWay, setOnTheWay] = useState(false);
   const [finished, setFinished] = useState(false);
@@ -42,6 +43,7 @@ const MisPedidos = (props) => {
     longitude: -4.0,
   });
   const dispatch = useDispatch();
+  // console.log("status:", status);
 
   useEffect(() => {
     const actualizarNavegacion = (ruta) =>
@@ -69,29 +71,40 @@ const MisPedidos = (props) => {
     // const type = requested?'Solicitado':onTheWay?'En camino': 'Terminado'
     const type = "Solicitado";
     // console.log('InuseEfect', type);
-    getCurrentDeliverys("333333333333", type).then((response) => {
-      console.log("response", response);
+    getCurrentDeliverys("333333333333", status).then((response) => {
+      // console.log("response", response);
       const array = [];
-      response.forEach((value) => {
+      response.forEach((value, index) => {
+        // console.log("value", value);
         const obj = {
-          date: `${new Date(value.fecha).getFullYear()}-${
-            new Date(value.fecha).getMonth() + 1
-          }-${new Date(value.fecha).getDate()}`,
-          time: `23:35:21`,
-          title: value.direccion.nombre,
-          userName: value.nombre_cliente,
-          payType: value.forma_pago,
-          products: value.productos,
+          date: value.date,
+          time: value.time,
+          date: value.date,
+          title: value.title,
+          userName: value.userName,
+          payType: value.payType,
+          products: { ...value.products },
           id: value.id,
-          pushToken: value.pushToken,
+          pushToken: value.userNotificationToken,
+          index: index,
+          // date: `${new Date(value.fecha).getFullYear()}-${
+          //   new Date(value.fecha).getMonth() + 1
+          // }-${new Date(value.fecha).getDate()}`,
+          // time: `23:35:21`,
+          // title: value.direccion.nombre,
+          // userName: value.nombre_cliente,
+          // payType: value.forma_pago,
+          // products: value.productos,
+          // id: value.id,
+          // pushToken: value.pushToken,
           ...value,
         };
         array.push(obj);
       });
       setCurrentDeliverys(array);
-      console.log("Respo: ", array);
+      // console.log("Respo: ", array);
     });
-  }, [requested, onTheWay, finished]);
+  }, [requested, onTheWay, finished, status]);
 
   const dummy_data = [
     {
@@ -140,7 +153,7 @@ const MisPedidos = (props) => {
     <Container styleContainer={styles.screen} navigation={props.navigation}>
       <BasicHeader
         icon={<ChevronLeftIcon height={15} width={15} />}
-        title='Mis Pedidos'
+        title="Mis Pedidos"
       />
       <View
         style={{
@@ -157,6 +170,7 @@ const MisPedidos = (props) => {
                 setOnTheWay(false);
                 setFinished(false);
                 setRequested(true);
+                setStatus("Solicitado");
               }
             }}
           >
@@ -177,6 +191,7 @@ const MisPedidos = (props) => {
                 setRequested(false);
                 setFinished(false);
                 setOnTheWay(true);
+                setStatus("En Camino");
               }
             }}
           >
@@ -197,6 +212,7 @@ const MisPedidos = (props) => {
                 setOnTheWay(false);
                 setRequested(false);
                 setFinished(true);
+                setStatus("Terminado");
               }
             }}
           >
@@ -301,7 +317,8 @@ const FinishedItem = ({ item }) => {
   const date = item.date;
   const formattedTime = item.time;
   const navigation = useNavigation();
-  console.log("Item; ", item);
+  // const end = item.orderStatus === "Terminado" ? "end" : undefined;
+  // console.log("Item; ", item);
 
   return (
     <TouchableNativeFeedback
@@ -393,7 +410,8 @@ const FinishedItem = ({ item }) => {
 const RequestedListItem = ({ item, navigation }) => {
   const date = item.date;
   const formattedTime = item.time;
-  // console.log('itm', item);
+  const index = item.index;
+  // console.log("index", index);
 
   return (
     <TouchableNativeFeedback
@@ -418,7 +436,7 @@ const RequestedListItem = ({ item, navigation }) => {
         ]}
       >
         <View style={{ width: "50%" }}>
-          <Text style={styles.user}>N73</Text>
+          <Text style={styles.user}>N{index + 1}</Text>
           <View style={[styles.row, { justifyContent: "space-between" }]}>
             <Text style={[styles.label]}>{`${date}`}</Text>
             <Text style={[styles.label]}>{formattedTime}</Text>
@@ -438,6 +456,7 @@ const EnCaminoItem = ({ item, navigation }) => {
   // const formattedTime = date[1].substring(0, 8);
   const date = item.date;
   const formattedTime = item.time;
+  // console.log("item:", item);
 
   return (
     <TouchableNativeFeedback
@@ -445,9 +464,10 @@ const EnCaminoItem = ({ item, navigation }) => {
         navigation.navigate("DetalleEnCamino", {
           item: {
             ...item,
-            title: "N73",
-            payType: "Efectivo",
-            product: { name: "Gas 15Kg", price: 1.6, qty: 5 },
+            // ,
+            // title: "N73",
+            // payType: "Efectivo",
+            // product: { name: "Gas 15Kg", price: 1.6, qty: 5 },
           },
         })
       }
@@ -472,7 +492,7 @@ const EnCaminoItem = ({ item, navigation }) => {
               justifyContent: "center",
             }}
           >
-            <Text style={styles.label}>ID {item.id}</Text>
+            {/* <Text style={styles.label}>ID {item.id}</Text> */}
           </View>
 
           <View

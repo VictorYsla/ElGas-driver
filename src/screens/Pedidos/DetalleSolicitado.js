@@ -26,31 +26,40 @@ import Container from "../../generales/Container";
 const DetalleSolicitado = (props) => {
   const fetchedItemData = props.route.params?.item;
   const user = useSelector((state) => state.login.login);
-  console.log("Recibido: ", fetchedItemData, user);
+  // console.log("Recibido: ", fetchedItemData, user);
+  console.log("fetchedItemData: ", fetchedItemData.pushToken);
   const date = fetchedItemData.date;
   const formattedTime = fetchedItemData.time;
   const onConfirm = async () => {
     await sendPushNotification(
-      fetchedItemData.pushToken,
-      "¡Su pedido está en camino!",
-      "El repartidor le notificará cuando se encuentre fuera de su domicilio"
+      fetchedItemData.pushToken
+      // "¡Su pedido está en camino!",
+      // "El repartidor le notificará cuando se encuentre fuera de su domicilio"
     );
     const { id_doc } = fetchedItemData;
     // console.log('fetchediwedir:  ', id_doc);
-    updateAceptedDelivery(user, id_doc, "En Camino");
+    // updateAceptedDelivery(user, id_doc, "En Camino");
+    try {
+      updateAceptedDelivery(user, id_doc, "En Camino");
+      props.navigation.push("MisPedidos");
+    } catch (error) {
+      alert("Ups, sucedió un error");
+    }
   };
 
   return (
     <Container styleContainer={styles.screen} navigation={props.navigation}>
       <BasicHeader
         icon={<ChevronLeftIcon height={20} width={20} />}
-        title='Solicitado'
+        title="Solicitado"
       />
 
       <ScrollView
-        contentContainerStyle={{
-          flexGrow: 1,
-        }}
+        contentContainerStyle={
+          {
+            // flexGrow: 1,
+          }
+        }
       >
         <View
           style={[
@@ -67,7 +76,7 @@ const DetalleSolicitado = (props) => {
               width: "80%",
               height: "45%",
               justifyContent: "center",
-              marginTop: -hp(4),
+              marginTop: hp(4),
             }}
           >
             <View style={[{ width: "100%", paddingHorizontal: 20 }]}>
@@ -89,7 +98,7 @@ const DetalleSolicitado = (props) => {
               <View>
                 <Text style={styles.title}>Dirección de entrega</Text>
                 <Text>{fetchedItemData.title}</Text>
-                <Text>N72</Text>
+                <Text>N{fetchedItemData.index + 1}</Text>
               </View>
               <ChevronRightIcon width={15} height={15} />
             </View>
@@ -124,7 +133,11 @@ const DetalleSolicitado = (props) => {
             >
               <View>
                 <Text style={styles.title}>Forma de Pago</Text>
-                <Text>{fetchedItemData.payType}</Text>
+                <Text>{`${fetchedItemData.payType} (Paga con ${
+                  fetchedItemData.payWith
+                }. Cambio ${
+                  fetchedItemData.payWith - fetchedItemData.total
+                })`}</Text>
               </View>
               <ChevronRightIcon width={15} height={15} />
             </View>
@@ -136,14 +149,16 @@ const DetalleSolicitado = (props) => {
             }}
           >
             {fetchedItemData.products.map((value, index) => {
+              // console.log("value:", value, "index:", index);
+
               return (
                 <>
                   <DeliveryItems
                     index={index}
-                    name={value.name}
-                    price={value.price}
+                    name={value.category.name}
+                    price={value.product.price}
                     quantity={value.quantity}
-                    uri={value.image_url}
+                    uri={value.product.photo_url}
                   />
                 </>
               );
@@ -164,13 +179,16 @@ const DetalleSolicitado = (props) => {
             ]}
           >
             <Text style={[styles.label, { marginVertical: 1 }]}>
-              Subtotal: $1.60
+              Subtotal: ${fetchedItemData.total - 2}
             </Text>
             <Text style={[styles.label, { marginVertical: 1 }]}>
               A domicilio: $2.00
             </Text>
             <Text style={[styles.label, { marginVertical: 1 }]}>
-              TOTAL: <Text style={[styles.productLabel]}>$10.00</Text>
+              TOTAL:{" "}
+              <Text style={[styles.productLabel]}>
+                ${fetchedItemData.total}
+              </Text>
             </Text>
           </View>
 
@@ -182,8 +200,8 @@ const DetalleSolicitado = (props) => {
             <View
               style={[
                 {
-                  width: 150,
                   height: 30,
+                  width: 150,
                 },
               ]}
             >
@@ -215,7 +233,7 @@ const DeliveryItems = ({
         {
           flexDirection: "row",
           justifyContent: "space-between",
-          marginVertical: 5,
+          marginVertical: 10,
         },
       ]}
       key={index}
@@ -235,8 +253,8 @@ const DeliveryItems = ({
       <View
         style={[
           {
-            width: "60%",
             justifyContent: "center",
+            width: "60%",
           },
         ]}
       >
@@ -260,8 +278,8 @@ const DeliveryItems = ({
 
 const styles = StyleSheet.create({
   screen: {
-    backgroundColor: "#fff",
     alignItems: "center",
+    backgroundColor: "#fff",
   },
   row: {
     flexDirection: "row",
