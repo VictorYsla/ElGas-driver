@@ -1,4 +1,5 @@
 import firebase from "firebase";
+import moment from "moment";
 
 export const updateCollection = async (
   collectionName = "1",
@@ -147,19 +148,43 @@ export const getDeliverys = async () => {
     });
 };
 
-export const updateAceptedDelivery = (user, docId, status) => {
+export const updateAceptedDelivery = async (user, docId, status) => {
   const collection = "plant_pedidos_en_camino";
   const { uid, userName } = user;
   // console.log(uid, userName, docId);
   try {
-    firebase.firestore().collection(collection).doc(docId).update({
-      orderStatus: status,
-      id_driver: uid,
-      nombre_driver: userName,
-    });
+    await firebase
+      .firestore()
+      .collection(collection)
+      .doc(docId)
+      .update({
+        orderStatus: status,
+        id_driver: uid,
+        nombre_driver: userName,
+        docId: docId,
+        date_miliseconds: moment(Date.now()).valueOf(),
+      });
     return true;
   } catch (error) {
     console.log("error:", error);
     return false;
   }
+};
+
+export const getCollectionFacturacion = async (collection, type, date, id) => {
+  console.log("type:", type, "date:", date, "id:", id);
+  return await firebase
+    .firestore()
+    .collection(collection)
+    .where("orderStatus", "==", `${type}`)
+    .where("date_miliseconds", ">=", date)
+    .where("id_driver", "==", `${id}`)
+    .get()
+    .then((x) => {
+      const values = [];
+      x.docs.forEach((doc) => {
+        values.push({ ...doc.data() });
+      });
+      return values;
+    });
 };

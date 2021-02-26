@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { RFPercentage } from "react-native-responsive-fontsize";
 //importaciones necesarias para redux//
 import { connect, useDispatch, useSelector } from "react-redux";
+import { getCurrentDeliverys } from "./apis/querys";
 
 import BasicHeader from "./components/Header/BasicHeader";
 import BillingIcon from "./components/Icons/BillingIcon";
@@ -18,6 +19,10 @@ import { actualizarLogin } from "./redux/reducers/login";
 const Inicio = (props) => {
   const login = useSelector((state) => state.login.login);
   const dispatch = useDispatch();
+
+  const navigateToFacturacion = () => {
+    props.navigation.navigate("MiFacturacion");
+  };
 
   return (
     <Container
@@ -111,7 +116,7 @@ const Inicio = (props) => {
           </TouchableOpacity>
           <TouchableOpacity
             activeOpacity={0.6}
-            onPress={() => props.navigation.navigate("MiFacturacion")}
+            onPress={() => navigateToFacturacion()}
           >
             <View style={[{ flexDirection: "row", alignItems: "center" }]}>
               <View style={[{ width: 30, height: 30, marginVertical: 15 }]}>

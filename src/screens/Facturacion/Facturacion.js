@@ -7,15 +7,24 @@ import ChevronLeftIcon from "../../components/Icons/ChevronLeftIcon";
 import Container from "../../generales/Container";
 import CalendarDriverIcon from "../../components/Icons/CalendarDriver";
 import { FlatList } from "react-native-gesture-handler";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { actions } from "../../redux";
 import { RFPercentage } from "react-native-responsive-fontsize";
+import moment from "moment";
+import { milisegundos } from "../../functions/dateChange";
+import { getCollectionFacturacion } from "../../apis/querys";
 
 const Facturacion = (props) => {
   const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(Date.now());
   const [showStartCalendar, setShowStartCalendar] = useState(false);
   const [showEndCalendar, setShowEndCalendar] = useState(false);
+  const [factura, setFactura] = useState([]);
+
+  // const factura = useSelector((state) => state.factura.factura);
+  const user = useSelector((state) => state.login.login);
+
+  console.log("factura:", factura);
 
   const dispatch = useDispatch();
 
@@ -23,7 +32,28 @@ const Facturacion = (props) => {
     const actualizarNavegacion = (ruta) =>
       dispatch(actions.actualizarUbicacion(ruta));
     actualizarNavegacion(props.route.name);
-  }, []);
+
+    const date = milisegundos(startDate);
+    const dateUntil = milisegundos(endDate);
+
+    const pedidosFinalizados = async () => {
+      await getCollectionFacturacion(
+        "plant_pedidos_en_camino",
+        "Terminado",
+        date,
+        user.uid
+      ).then((response) => {
+        // dispatch(actions.actualizarFacturacion(response));
+        // console.log("respnse:", response);
+        const arrayMap = response.filter(
+          (i) => i.date_miliseconds <= dateUntil
+        );
+        setFactura(arrayMap);
+      });
+    };
+
+    pedidosFinalizados();
+  }, [startDate, endDate]);
 
   const onChangeStartDate = (event, selectedDate) => {
     const currentDate = selectedDate || startDate;
@@ -102,9 +132,10 @@ const Facturacion = (props) => {
           >
             <Text style={[styles.label]}>Desde: </Text>
             <Text style={[styles.label]}>
-              {`${startDate.getDate()}-${
+              {/* {`${startDate.getDate()}-${
                 startDate.getMonth() + 1
-              }-${startDate.getFullYear()}`}
+              }-${startDate.getFullYear()}`} */}
+              {moment(startDate).format("DD/MM/YYYY")}
             </Text>
             <TouchableOpacity
               activeOpacity={0.6}
@@ -118,9 +149,10 @@ const Facturacion = (props) => {
           <View style={[{ flexDirection: "row", alignItems: "center" }]}>
             <Text style={[styles.label]}>Hasta: </Text>
             <Text style={[styles.label]}>
-              {`${endDate.getDate()}-${
+              {/* {`${endDate.getDate()}-${
                 endDate.getMonth() + 1
-              }-${endDate.getFullYear()}`}
+              }-${endDate.getFullYear()}`} */}
+              {moment(endDate).format("DD/MM/YYYY")}
             </Text>
             <TouchableOpacity
               activeOpacity={0.6}
@@ -168,29 +200,32 @@ const Facturacion = (props) => {
             ]}
           >
             <View style={[{ alignItems: "center", flex: 1 }]}>
-              <Text style={[styles.label]}>ID</Text>
+              <Text style={[styles.label]}>Número</Text>
             </View>
             <View style={[{ alignItems: "center", flex: 1 }]}>
               <Text style={[styles.label]}>Fecha</Text>
             </View>
             <View style={[{ alignItems: "center", flex: 1 }]}>
-              <Text style={[styles.label]}>Distribuidor</Text>
+              <Text style={[styles.label]}>Hora</Text>
             </View>
           </View>
           {/* Body */}
           <FlatList
-            data={[
-              { id: 970, fecha: "2020/06/30", distribuidor: 14.0 },
-              { id: 969, fecha: "2020/06/30", distribuidor: 14.0 },
-              { id: 968, fecha: "2020/06/30", distribuidor: 14.0 },
-              { id: 967, fecha: "2020/06/30", distribuidor: 14.0 },
-              { id: 966, fecha: "2020/06/30", distribuidor: 14.0 },
-              { id: 965, fecha: "2020/06/30", distribuidor: 14.0 },
-              { id: 964, fecha: "2020/06/30", distribuidor: 14.0 },
-              { id: 963, fecha: "2020/06/30", distribuidor: 14.0 },
-            ]}
+            data={
+              //   [
+              //   { id: 970, fecha: "2020/06/30", distribuidor: 14.0 },
+              //   { id: 969, fecha: "2020/06/30", distribuidor: 14.0 },
+              //   { id: 968, fecha: "2020/06/30", distribuidor: 14.0 },
+              //   { id: 967, fecha: "2020/06/30", distribuidor: 14.0 },
+              //   { id: 966, fecha: "2020/06/30", distribuidor: 14.0 },
+              //   { id: 965, fecha: "2020/06/30", distribuidor: 14.0 },
+              //   { id: 964, fecha: "2020/06/30", distribuidor: 14.0 },
+              //   { id: 963, fecha: "2020/06/30", distribuidor: 14.0 },
+              // ]
+              factura.reverse()
+            }
             keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item }) => (
+            renderItem={({ item, index }) => (
               <View
                 style={[
                   {
@@ -201,13 +236,13 @@ const Facturacion = (props) => {
                 ]}
               >
                 <View style={[{ alignItems: "center", flex: 1 }]}>
-                  <Text style={[styles.label]}>{item.id}</Text>
+                  <Text style={[styles.label]}>{index + 1}</Text>
                 </View>
                 <View style={[{ alignItems: "center", flex: 1 }]}>
-                  <Text style={[styles.label]}>{item.fecha}</Text>
+                  <Text style={[styles.label]}>{item.date}</Text>
                 </View>
                 <View style={[{ alignItems: "center", flex: 1 }]}>
-                  <Text style={[styles.label]}>{item.distribuidor}</Text>
+                  <Text style={[styles.label]}>{item.time}</Text>
                 </View>
               </View>
             )}

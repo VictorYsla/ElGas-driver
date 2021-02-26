@@ -7,7 +7,7 @@ import {
   FlatList,
 } from "react-native";
 import { RFPercentage } from "react-native-responsive-fontsize";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import BasicHeader from "../../components/Header/BasicHeader";
 import AddressMarker from "../../components/Icons/AddressMarker";
 import ChevronLeftIcon from "../../components/Icons/ChevronLeftIcon";
@@ -42,8 +42,16 @@ const MisPedidos = (props) => {
     latitude: 74.0,
     longitude: -4.0,
   });
+  const user = useSelector((state) => state.login.login);
+  const factura = useSelector((state) => state.factura.factura);
+
   const dispatch = useDispatch();
-  // console.log("status:", status);
+
+  const pedidoRepartidor = currentDeliverys.filter(
+    (item) => item.id_driver === user.uid
+  );
+  // console.log("user", user.uid);
+  console.log("pedidoRepartidor", pedidoRepartidor);
 
   useEffect(() => {
     const actualizarNavegacion = (ruta) =>
@@ -246,7 +254,7 @@ const MisPedidos = (props) => {
           />
         </View>
       )}
-      {onTheWay && currentDeliverys && (
+      {onTheWay && pedidoRepartidor && (
         <View
           style={{
             width: "100%",
@@ -256,7 +264,7 @@ const MisPedidos = (props) => {
           }}
         >
           <FlatList
-            data={currentDeliverys}
+            data={pedidoRepartidor}
             renderItem={({ item }) => (
               <EnCaminoItem item={item} navigation={props.navigation} />
             )}
@@ -264,7 +272,7 @@ const MisPedidos = (props) => {
           />
         </View>
       )}
-      {finished && currentDeliverys && (
+      {finished && pedidoRepartidor && (
         <View
           style={{
             flex: 1,
@@ -275,7 +283,7 @@ const MisPedidos = (props) => {
           }}
         >
           <FlatList
-            data={currentDeliverys}
+            data={pedidoRepartidor}
             contentContainerStyle={[{ paddingVertical: 10 }]}
             renderItem={({ item }) => <FinishedItem item={item} />}
             showsVerticalScrollIndicator={false}

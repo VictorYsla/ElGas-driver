@@ -31,7 +31,7 @@ const DetalleEnCamino = (props) => {
   const formattedTime = fetchedItemData.time;
   const user = useSelector((state) => state.login.login);
 
-  // console.log("props.route.params ", props.route.params);
+  // console.log("fetchedItemData ", fetchedItemData);
   const status =
     fetchedItemData.orderStatus === "Terminado" ? "end" : undefined;
 
